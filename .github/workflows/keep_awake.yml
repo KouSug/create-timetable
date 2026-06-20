@@ -1,0 +1,16 @@
+name: Keep Streamlit App Awake
+
+on:
+  schedule:
+    # 毎日UTCの午前0時（日本時間の午前9時）と、念のため12時間後にも実行
+    - cron: '0 0,12 * * *'
+  # 手動でも実行できるようにする
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Streamlit App
+        run: |
+          curl -sSf https://create-timetable-gss8wrjtvmhizucoacuvtz.streamlit.app/ > /dev/null || echo "Ping failed, but workflow continues."
