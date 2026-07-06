@@ -755,8 +755,7 @@ def main():
         }
         
         /* 万が一Dropzone内にファイルリストが入る場合のためのフェイルセーフ */
-        [data-testid="stFileUploaderDropzone"] div:has(button[aria-label*="emove"]),
-        [data-testid="stFileUploaderDropzone"] div:has(small) {
+        [data-testid="stFileUploaderDropzone"] div:has(button[aria-label*="emove"]) {
             display: none !important;
             height: 0 !important;
             opacity: 0 !important;
