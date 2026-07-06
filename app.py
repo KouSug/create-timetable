@@ -736,12 +736,16 @@ def main():
             background-color: transparent !important;
             min-height: auto !important;
         }
-        /* ボタン内の不要なアイコン等を消去 */
-        [data-testid="stFileUploader"] button > * {
+        /* アップロード完了後のファイルアイコン（黒い四角）を消去 */
+        [data-testid="stFileUploader"] svg {
             display: none !important;
         }
-        /* ボタンのデザインをデータ確認ボタンに合わせる */
-        [data-testid="stFileUploader"] button {
+        /* ボタン内の不要なアイコン等を消去（ドロップゾーンのみ対象） */
+        [data-testid="stFileUploaderDropzone"] button > * {
+            display: none !important;
+        }
+        /* ボタンのデザインをデータ確認ボタンに合わせる（ドロップゾーンのみ対象） */
+        [data-testid="stFileUploaderDropzone"] button {
             font-size: 0 !important; /* 元の文字を幅ごと完全に消す */
             color: transparent !important;
             background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%) !important;
@@ -756,18 +760,18 @@ def main():
             justify-content: center !important;
             text-align: center !important;
         }
-        [data-testid="stFileUploader"] button:hover {
+        [data-testid="stFileUploaderDropzone"] button:hover {
             background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%) !important;
             border-color: #aaa !important;
             transform: translateY(-1px) !important;
             box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
         }
-        [data-testid="stFileUploader"] button:active {
+        [data-testid="stFileUploaderDropzone"] button:active {
             transform: translateY(1px) !important;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
         }
-        /* 疑似要素でテキストを上書き */
-        [data-testid="stFileUploader"] button::after {
+        /* 疑似要素でテキストを上書き（ドロップゾーンのみ対象） */
+        [data-testid="stFileUploaderDropzone"] button::after {
             content: "📁 ファイルをアップロード";
             font-size: 1rem !important; /* 新しい文字のサイズ */
             font-weight: 600 !important;
@@ -776,7 +780,8 @@ def main():
         </style>
     """, unsafe_allow_html=True)
 
-    col_upload, col_btn = st.columns([3, 1], vertical_alignment="bottom")
+    # アップロードボタンとデータ確認ボタンを近づけるためにカラム比率を [1, 1] 等に変更（余白として右側に空の[1, 1]を足す）
+    col_upload, col_btn, col_empty = st.columns([2, 1, 1], vertical_alignment="bottom")
     with col_upload:
         uploaded_file = st.file_uploader("設定ファイルの読み込み", type=["xlsx", "xls", "xlsm"], label_visibility="collapsed")
     with col_btn:
