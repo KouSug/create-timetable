@@ -757,13 +757,14 @@ def main():
             display: none !important;
         }
         
-        /* ボタンのデザインを他の標準ボタン（データ確認、クリア）に完璧に合わせる */
+        /* ボタンのデザインをプレミアムなグラデーションに復元 */
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] {
             font-size: 0 !important; /* 元の文字を幅ごと完全に消す */
             color: transparent !important;
-            background-color: #ffffff !important;
-            border: 1px solid rgba(49, 51, 63, 0.2) !important;
+            background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%) !important;
+            border: 1px solid #ccc !important;
             border-radius: 8px !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
             transition: all 0.2s ease !important;
             width: 100% !important; /* 幅いっぱいに広げる */
             min-height: 38px !important; /* 高さをデータ確認ボタンと完全に一致させる */
@@ -773,11 +774,15 @@ def main():
             justify-content: center !important;
         }
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:hover {
-            border-color: #FF4B4B !important;
-            color: transparent !important; /* hover時も透明を維持 */
+            background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%) !important;
+            border-color: #aaa !important;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
+            transform: translateY(-1px) !important;
+            color: transparent !important;
         }
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:active {
-            background-color: #FF4B4B !important;
+            transform: translateY(1px) !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
             color: transparent !important;
         }
         /* 疑似要素でテキストを上書き（ボタンの寸法を自動拡張させるため絶対配置は使わない） */
@@ -787,14 +792,34 @@ def main():
             align-items: center;
             justify-content: center;
             font-size: 16px !important;
-            font-weight: normal !important;
-            color: #31333F !important;
+            font-weight: 600 !important;
+            color: #333 !important;
         }
-        [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:hover::after {
-            color: #FF4B4B !important;
+        
+        /* データ確認ボタン・クリアボタンにも同様のグラデーションを適用 */
+        .main div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"] {
+            background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%) !important;
+            border: 1px solid #ccc !important;
+            border-radius: 8px !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+            transition: all 0.2s ease !important;
         }
-        [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:active::after {
-            color: #ffffff !important;
+        .main div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"] p {
+            color: #333 !important;
+            font-weight: 600 !important;
+        }
+        .main div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"]:hover {
+            background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%) !important;
+            border-color: #aaa !important;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
+            transform: translateY(-1px) !important;
+        }
+        .main div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"]:hover p {
+            color: #333 !important;
+        }
+        .main div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"]:active {
+            transform: translateY(1px) !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
         }
         </style>
     """, unsafe_allow_html=True)
