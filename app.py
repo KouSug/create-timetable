@@ -740,6 +740,12 @@ def main():
         [data-testid="stFileUploader"] svg {
             display: none !important;
         }
+        /* アップロード完了後のファイルの枠線や背景を透明にする（赤い枠などが出ないように） */
+        [data-testid="stUploadedFile"] {
+            border: none !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
         /* ボタン内の不要なアイコン等を消去（ドロップゾーンのみ対象） */
         [data-testid="stFileUploaderDropzone"] button > * {
             display: none !important;
