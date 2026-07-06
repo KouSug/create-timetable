@@ -714,9 +714,24 @@ def main():
         </div>
     """, unsafe_allow_html=True)
 
+    st.markdown("""
+        <style>
+        /* ファイルアップローダーをコンパクトなボタン型に変形するCSS */
+        [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] > div:first-child {
+            display: none !important;
+        }
+        [data-testid="stFileUploaderDropzone"] {
+            padding: 0 !important;
+            border: none !important;
+            background-color: transparent !important;
+            min-height: auto !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     col_upload, col_btn = st.columns([3, 1], vertical_alignment="bottom")
     with col_upload:
-        uploaded_file = st.file_uploader("Excelファイルをドラッグ＆ドロップ", type=["xlsx", "xls", "xlsm"])
+        uploaded_file = st.file_uploader("設定ファイル（Excel）を選択してください", type=["xlsx", "xls", "xlsm"])
     with col_btn:
         raw_data_btn_container = st.container()
 
