@@ -1095,7 +1095,7 @@ def main():
                     st.warning("⚠️ 「少人数ペア設定」の列がマップされていないため、この条件では作成できません。")
 
             st.markdown("---")
-            if st.button("時間割を自動作成する", type="primary", use_container_width=True):
+            if st.button("時間割作成", type="primary", use_container_width=True):
                 if "講師の授業" in target_filter and not lecturer_col:
                     st.error("「講師設定」の列が指定されていません。")
                     return
