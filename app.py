@@ -725,7 +725,7 @@ def main():
             if test_mode_toggled:
                 if not st.session_state.get("test_mode_unlocked", False):
                     pw = st.text_input("パスワードを入力", type="password")
-                    if pw == "7777":
+                    if pw == "abc123":
                         st.session_state.test_mode_unlocked = True
                         st.rerun()
                     elif pw != "":
