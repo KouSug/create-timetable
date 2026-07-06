@@ -1040,6 +1040,99 @@ def main():
             st.success("ファイルの読み込みに成功しました！")
             if raw_data_btn_placeholder.button("📋データ確認", use_container_width=True):
                     show_raw_data_dialog(df)
+                    
+            if is_test_mode:
+                st.markdown("---")
+                st.markdown("### 📊 過去データの傾向分析（テスト機能）")
+                target_sheets = [s for s in sheet_names if "第" in s and "週" in s]
+                if not target_sheets:
+                    st.info("「第○週」という名前のシートが見つかりませんでした。分析するには、追記出力された過去の時間割が含まれている必要があります。")
+                    return
+                
+                st.write(f"以下の {len(target_sheets)} 件の過去シートを分析します：", ", ".join(target_sheets))
+                
+                import re
+                def get_grade(cls_name):
+                    if not isinstance(cls_name, str): return None
+                    m = re.search(r'([1-6１-６])', cls_name)
+                    if m: return m.group(1)
+                    return None
+                    
+                total_consecutive = 0
+                same_grade_consecutive = 0
+                diff_grade_gap = 0
+                diff_grade_nogap = 0
+                
+                teacher_stats = {}
+                
+                for s in target_sheets:
+                    df_sheet = pd.read_excel(xls, sheet_name=s, header=None, engine='openpyxl')
+                    for t_name, row_num in st.session_state.teacher_default_rows.items():
+                        row_idx = row_num - 1 # 0-based
+                        if row_idx < 0 or row_idx >= len(df_sheet):
+                            continue
+                            
+                        # E列 (index 4) から AK列 (index 36) くらいまでが時間割データ
+                        row_data = df_sheet.iloc[row_idx, 4:40].tolist() 
+                        
+                        if t_name not in teacher_stats:
+                            teacher_stats[t_name] = {'total_cons': 0, 'same_grade_cons': 0, 'diff_grade_gap': 0, 'diff_grade_nogap': 0}
+                            
+                        for day_idx in range(6): # 最大6日
+                            day_classes = row_data[day_idx*6 : min((day_idx+1)*6, len(row_data))]
+                            last_class_period = -1
+                            last_grade = None
+                            
+                            for p, cell in enumerate(day_classes):
+                                if pd.notna(cell) and str(cell).strip() != "":
+                                    grade = get_grade(str(cell))
+                                    if grade is not None:
+                                        if last_grade is not None:
+                                            gap = p - last_class_period - 1
+                                            if gap == 0:
+                                                total_consecutive += 1
+                                                teacher_stats[t_name]['total_cons'] += 1
+                                                if grade == last_grade:
+                                                    same_grade_consecutive += 1
+                                                    teacher_stats[t_name]['same_grade_cons'] += 1
+                                                else:
+                                                    diff_grade_nogap += 1
+                                                    teacher_stats[t_name]['diff_grade_nogap'] += 1
+                                            else:
+                                                if grade != last_grade:
+                                                    diff_grade_gap += 1
+                                                    teacher_stats[t_name]['diff_grade_gap'] += 1
+                                        last_grade = grade
+                                        last_class_period = p
+
+                st.subheader("全体サマリー")
+                col1, col2 = st.columns(2)
+                with col1:
+                    rate1 = (same_grade_consecutive / total_consecutive * 100) if total_consecutive > 0 else 0
+                    st.metric("同じ学年の連続率", f"{rate1:.1f}%", help="連続する授業のうち、同じ学年の授業が占める割合")
+                with col2:
+                    total_diff = diff_grade_nogap + diff_grade_gap
+                    rate2 = (diff_grade_gap / total_diff * 100) if total_diff > 0 else 0
+                    st.metric("学年またぎ時の空きコマ率", f"{rate2:.1f}%", help="違う学年に移る際に、間に1コマ以上の空きがある割合")
+                    
+                st.subheader("教員別データ")
+                stats_list = []
+                for t, stats in teacher_stats.items():
+                    if stats['total_cons'] > 0 or (stats['diff_grade_gap'] + stats['diff_grade_nogap']) > 0:
+                        r1 = (stats['same_grade_cons'] / stats['total_cons'] * 100) if stats['total_cons'] > 0 else None
+                        tot_diff = stats['diff_grade_gap'] + stats['diff_grade_nogap']
+                        r2 = (stats['diff_grade_gap'] / tot_diff * 100) if tot_diff > 0 else None
+                        stats_list.append({
+                            "教員名": t,
+                            "同じ学年の連続率": f"{r1:.1f}%" if r1 is not None else "-",
+                            "学年またぎ時の空きコマ率": f"{r2:.1f}%" if r2 is not None else "-"
+                        })
+                        
+                if stats_list:
+                    st.dataframe(stats_list, use_container_width=True)
+                else:
+                    st.info("分析可能なデータが見つかりませんでした。")
+                return
                 
             st.markdown("---")
             st.markdown("#### 1. 項目の設定")
