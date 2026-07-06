@@ -718,7 +718,7 @@ def main():
         <style>
         /* ファイルアップローダーをコンパクトなボタン型に変形するCSS */
         /* ドラッグ＆ドロップ領域の不要なテキストやアイコンを消すための安全なCSS */
-        /* Dropzone全体に影響（文字を透明化） */
+        /* Dropzone全体に影響（文字を透明化してデフォルトテキストを消去） */
         [data-testid="stFileUploaderDropzone"] {
             color: transparent !important;
             padding: 0 !important;
@@ -728,35 +728,14 @@ def main():
             width: max-content !important; /* 余白がクリック可能になるのを防ぐため、幅をボタンに合わせる */
         }
         
-        /* Dropzone内のSVGアイコン（雲マークやファイルアイコン）をすべて消去 */
+        /* Dropzone内のSVGアイコン（雲マークやファイルアイコン）を消去 */
         [data-testid="stFileUploaderDropzone"] svg {
             display: none !important;
         }
         
-        /* Dropzone内のsmallタグ（ファイルサイズや上限表示）をすべて消去 */
+        /* Dropzone内のsmallタグ（上限表示）を消去 */
         [data-testid="stFileUploaderDropzone"] small {
             display: none !important;
-        }
-
-        /* 削除ボタン（'Browse files' 以外のボタン）を非表示にする */
-        [data-testid="stFileUploaderDropzone"] button:not([data-testid="stBaseButton-secondary"]) {
-            display: none !important;
-        }
-
-        /* Streamlitデフォルトのアップロード済みファイル一覧UI（Dropzone外に出た場合）を完全に非表示にする */
-        [data-testid="stFileUploader"] ul,
-        [data-testid="stUploadedFileList"], 
-        [data-testid="stUploadedFile"],
-        [data-testid="stFileUploaderFile"],
-        [data-testid="stFileUploaderDropzone"] ~ div,
-        [data-testid="stFileUploaderDropzone"] ~ ul,
-        [data-testid="stFileUploaderDropzone"] ~ section {
-            display: none !important;
-            height: 0 !important;
-            opacity: 0 !important;
-            overflow: hidden !important;
-            position: absolute !important;
-            z-index: -999 !important;
         }
 
         /* アップロードボタン内の不要なアイコン等を消去 */
@@ -801,16 +780,32 @@ def main():
 
     if "uploader_key" not in st.session_state:
         st.session_state.uploader_key = 0
+    if "saved_file" not in st.session_state:
+        st.session_state.saved_file = None
 
     # アップロードボタンとデータ確認ボタンを極力左に詰めて並べる
     col_upload, col_btn, col_empty = st.columns([1.5, 0.7, 2.5], vertical_alignment="bottom")
     with col_upload:
-        # accept_multiple_files=True にすることで、アップロード後も常にボタン（ドロップゾーン）を残す
+        # StreamlitのファイルリストUIを出さないため、アップロード直後にウィジェットを強制リセットする
         uploaded_files = st.file_uploader("設定ファイルの読み込み", type=["xlsx", "xls", "xlsm"], accept_multiple_files=True, label_visibility="collapsed", key=f"uploader_{st.session_state.uploader_key}")
+        
+        if uploaded_files:
+            file = uploaded_files[-1]
+            import io
+            class SavedFile(io.BytesIO):
+                def __init__(self, name, size, data):
+                    super().__init__(data)
+                    self.name = name
+                    self.size = size
+            
+            st.session_state.saved_file = SavedFile(file.name, file.size, file.getvalue())
+            st.session_state.uploader_key += 1
+            st.rerun()
+
     with col_btn:
         raw_data_btn_container = st.container()
 
-    uploaded_file = uploaded_files[-1] if uploaded_files else None
+    uploaded_file = st.session_state.saved_file
 
     if uploaded_file is not None:
         # デフォルトUIを消した代わりに、テキストだけでファイル名とサイズを表示する
@@ -821,7 +816,7 @@ def main():
             st.markdown(f"<div style='margin-top: -5px; margin-bottom: 20px; color: #444; font-size: 0.95rem; display: flex; align-items: center;'>{excel_icon_svg} <b>{uploaded_file.name}</b>&nbsp;({uploaded_file.size / 1024:.1f} KB)</div>", unsafe_allow_html=True)
         with col_clear:
             if st.button("✖ クリア", key="clear_file_btn", use_container_width=True):
-                st.session_state.uploader_key += 1
+                st.session_state.saved_file = None
                 st.rerun()
 
         
