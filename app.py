@@ -720,6 +720,8 @@ def main():
         
         with st.sidebar:
             st.markdown("### ⚙️ 詳細設定")
+            is_test_mode = st.toggle("🔧 テストモード", value=False, help="開発者用のデバッグ機能を有効にします")
+            st.markdown("---")
             st.markdown("#### 設定ファイルの認識設定")
             st.caption("※通常は変更不要です")
             st.info(f"表の開始セル: **{start_cell}**")
@@ -910,18 +912,20 @@ def main():
             
             block_class_on_fixed = False
 
-            st.markdown("---")
-            st.markdown("#### 4. 作成対象の絞り込み（テスト用）")
-            target_filter = st.radio(
-                "どの授業を自動作成の対象にしますか？",
-                options=["すべての授業を作成（通常設定）", "講師の授業のみ作成（テスト用）", "少人数ペアの授業のみ作成（テスト用）", "それ以外の一般授業のみ作成（テスト用）"],
-                index=0
-            )
-            
-            if "講師の授業" in target_filter and not lecturer_col:
-                st.warning("⚠️ 「講師設定」の列がマップされていないため、この条件では作成できません。")
-            if "少人数ペア" in target_filter and not tt_col:
-                st.warning("⚠️ 「少人数ペア設定」の列がマップされていないため、この条件では作成できません。")
+            target_filter = "すべての授業を作成（通常設定）"
+            if is_test_mode:
+                st.markdown("---")
+                st.markdown("#### 4. 作成対象の絞り込み（テスト用）")
+                target_filter = st.radio(
+                    "どの授業を自動作成の対象にしますか？",
+                    options=["すべての授業を作成（通常設定）", "講師の授業のみ作成（テスト用）", "少人数ペアの授業のみ作成（テスト用）", "それ以外の一般授業のみ作成（テスト用）"],
+                    index=0
+                )
+                
+                if "講師の授業" in target_filter and not lecturer_col:
+                    st.warning("⚠️ 「講師設定」の列がマップされていないため、この条件では作成できません。")
+                if "少人数ペア" in target_filter and not tt_col:
+                    st.warning("⚠️ 「少人数ペア設定」の列がマップされていないため、この条件では作成できません。")
 
             st.markdown("---")
             if st.button("時間割を自動作成する", type="primary", use_container_width=True):
