@@ -742,16 +742,11 @@ def main():
             line-height: 0 !important;
         }
         
-        /* Dropzone内のSVGアイコン（雲マークやファイルアイコン）を消去 */
-        [data-testid="stFileUploaderDropzone"] svg {
+        /* Dropzone内のボタン以外の要素（不要なテキストやアイコン）を完全に空間ごと消去 */
+        [data-testid="stFileUploaderDropzone"] > :not(button) {
             display: none !important;
         }
         
-        /* Dropzone内のsmallタグ（上限表示）を消去 */
-        [data-testid="stFileUploaderDropzone"] small {
-            display: none !important;
-        }
-
         /* アップロードボタン内の不要なアイコン等を消去 */
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] > * {
             display: none !important;
@@ -765,8 +760,6 @@ def main():
             border-radius: 8px !important;
             transition: all 0.2s ease !important;
             width: 100% !important; /* 幅いっぱいに広げる */
-            padding: 8px 16px !important;
-            margin-top: 14px !important; /* ボタン自身を下に押し下げて横のボタンと高さを完璧に合わせる */
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
@@ -796,7 +789,7 @@ def main():
         st.session_state.saved_file = None
 
     # アップロードボタンとデータ確認ボタンの隙間を最小限にするため、カラム幅を詰める
-    col_upload, col_btn, col_clear, col_empty = st.columns([0.9, 0.7, 0.7, 2.5], vertical_alignment="center")
+    col_upload, col_btn, col_clear, col_empty = st.columns([0.9, 0.7, 0.7, 2.5], vertical_alignment="bottom")
     with col_upload:
         # StreamlitのファイルリストUIを出さないため、アップロード直後にウィジェットを強制リセットする
         uploaded_files = st.file_uploader("設定ファイルの読み込み", type=["xlsx", "xls", "xlsm"], accept_multiple_files=True, label_visibility="collapsed", key=f"uploader_{st.session_state.uploader_key}")
