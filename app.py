@@ -718,7 +718,7 @@ def main():
         <style>
         /* ファイルアップローダーをコンパクトなボタン型に変形するCSS */
         /* ドラッグ＆ドロップ領域の不要なテキストやアイコンを消す */
-        [data-testid="stFileUploaderDropzoneInstructions"] {
+        [data-testid="stFileUploaderDropzoneInstructions"] > *:not(button) {
             display: none !important;
         }
         [data-testid="stFileUploaderDropzone"] svg {
@@ -737,20 +737,37 @@ def main():
             min-height: auto !important;
             width: max-content !important; /* 余白がクリック可能になるのを防ぐため、幅をボタンに合わせる */
         }
-        /* Streamlitデフォルトのアップロード済みファイル一覧UIを完全に非表示にする（Dropzone内・外両方対応） */
-        [data-testid="stFileUploaderDropzone"] > div:not([data-testid="stFileUploaderDropzoneInstructions"]) {
+        
+        /* Streamlitデフォルトのアップロード済みファイル一覧UIを完全に非表示にする */
+        [data-testid="stFileUploader"] ul,
+        [data-testid="stUploadedFileList"], 
+        [data-testid="stUploadedFile"],
+        [data-testid="stFileUploaderFile"],
+        [data-testid="stFileUploaderDropzone"] ~ div,
+        [data-testid="stFileUploaderDropzone"] ~ ul,
+        [data-testid="stFileUploaderDropzone"] ~ section {
             display: none !important;
+            height: 0 !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
+            position: absolute !important;
+            z-index: -999 !important;
         }
-        [data-testid="stFileUploader"] > div > *:not([data-testid="stFileUploaderDropzone"]) {
+        
+        /* 万が一Dropzone内にファイルリストが入る場合のためのフェイルセーフ */
+        [data-testid="stFileUploaderDropzone"] div:has(button[aria-label*="emove"]),
+        [data-testid="stFileUploaderDropzone"] div:has(small) {
             display: none !important;
+            height: 0 !important;
+            opacity: 0 !important;
         }
 
-        /* ボタン内の不要なアイコン等を消去 */
-        [data-testid="stFileUploaderDropzoneInstructions"] button > * {
+        /* ボタン内の不要なアイコン等を消去（アップロードボタンのみを狙い撃ち） */
+        [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] > * {
             display: none !important;
         }
         /* ボタンのデザインをデータ確認ボタンに合わせる */
-        [data-testid="stFileUploaderDropzoneInstructions"] button {
+        [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] {
             font-size: 0 !important; /* 元の文字を幅ごと完全に消す */
             color: transparent !important;
             background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%) !important;
@@ -759,24 +776,24 @@ def main():
             box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
             transition: all 0.2s ease !important;
             width: 100% !important; /* 幅いっぱいに広げる */
-            padding: 0.5rem 1.5rem !important;
+            padding: 8px 16px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
         }
-        [data-testid="stFileUploaderDropzoneInstructions"] button:hover {
+        [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:hover {
             background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%) !important;
             border-color: #aaa !important;
             transform: translateY(-1px) !important;
             box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
         }
-        [data-testid="stFileUploaderDropzoneInstructions"] button:active {
+        [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:active {
             transform: translateY(1px) !important;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
         }
         /* 疑似要素でテキストを上書き */
-        [data-testid="stFileUploaderDropzoneInstructions"] button::after {
+        [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]::after {
             content: "📁 ファイルをアップロード";
             font-size: 16px !important; /* データ確認ボタンとフォントサイズを合わせる */
             font-weight: normal !important; /* データ確認ボタンとフォントを合わせる */
