@@ -969,62 +969,65 @@ def main():
             
         try:
             xls = pd.ExcelFile(uploaded_file, engine='openpyxl')
-            if len(xls.sheet_names) >= 2:
-                # 1シート目（Index 0）を読み込み、D列（index 3）から教員順序、AB列（index 27）から行番号を取得
-                df_order = pd.read_excel(xls, sheet_name=0, header=None, engine='openpyxl')
-                teacher_order = None
-                teacher_default_rows = {}
-                if df_order.shape[1] >= 4:
-                    teacher_order = []
-                    for i in range(len(df_order)):
-                        t_name = str(df_order.iloc[i, 3]).strip()
-                        if t_name and t_name.lower() != "nan":
-                            if t_name not in teacher_order:
-                                teacher_order.append(t_name)
-                            if df_order.shape[1] > 27:
-                                val = df_order.iloc[i, 27]
-                                if pd.notna(val) and str(val).strip() != "":
-                                    try:
-                                        teacher_default_rows[t_name] = int(float(str(val).strip()))
-                                    except ValueError:
-                                        pass
-                st.session_state.teacher_default_rows = teacher_default_rows
-                
-                if len(xls.sheet_names) >= 3:
-                    df_week = pd.read_excel(xls, sheet_name=2, header=None, engine='openpyxl')
-                    week_options = []
-                    week_data_map = {}
-                    for i in range(1, len(df_week)):
-                        row_vals = df_week.iloc[i, 1:4].dropna().tolist()
-                        if len(row_vals) >= 3:
-                            col1 = str(row_vals[0]).replace('.0', '')
-                            def format_date(d):
-                                if isinstance(d, pd.Timestamp):
-                                    if d.year >= 2019:
-                                        return f"R{d.year - 2018}.{d.month}.{d.day}"
-                                    return f"{d.year}.{d.month}.{d.day}"
-                                return str(d).split()[0]
-                            col2 = format_date(row_vals[1])
-                            col3 = format_date(row_vals[2])
-                            week_str = f"【週案{col1}】　{col2} ～ {col3}"
-                            week_options.append(week_str)
-                            week_data_map[week_str] = {
-                                'week': col1,
-                                'start': row_vals[1],
-                                'end': row_vals[2]
-                            }
-                    st.session_state.week_options = week_options
-                    st.session_state.week_data_map = week_data_map
-                else:
-                    st.session_state.week_options = []
-                    st.session_state.week_data_map = {}
-                    
-                # 2シート目（Index 1）をデータとして読み込み
-                df = pd.read_excel(xls, sheet_name=1, header=header_row - 1, engine='openpyxl')
+            sheet_names = xls.sheet_names
+            
+            # シート名の解決（指定された名前が見つからなければフォールバック）
+            sheet_name_tantou = "担当" if "担当" in sheet_names else 0
+            sheet_name_wariate = "割当設定" if "割当設定" in sheet_names else (1 if len(sheet_names) >= 2 else 0)
+            sheet_name_shu = "週設定" if "週設定" in sheet_names else (2 if len(sheet_names) >= 3 else None)
+
+            # 「担当」シートの読み込み
+            df_order = pd.read_excel(xls, sheet_name=sheet_name_tantou, header=None, engine='openpyxl')
+            teacher_order = None
+            teacher_default_rows = {}
+            if df_order.shape[1] >= 4:
+                teacher_order = []
+                for i in range(len(df_order)):
+                    t_name = str(df_order.iloc[i, 3]).strip()
+                    if t_name and t_name.lower() != "nan":
+                        if t_name not in teacher_order:
+                            teacher_order.append(t_name)
+                        if df_order.shape[1] > 27:
+                            val = df_order.iloc[i, 27]
+                            if pd.notna(val) and str(val).strip() != "":
+                                try:
+                                    teacher_default_rows[t_name] = int(float(str(val).strip()))
+                                except ValueError:
+                                    pass
+            st.session_state.teacher_default_rows = teacher_default_rows
+            
+            # 「週設定」シートの読み込み
+            if sheet_name_shu is not None:
+                df_week = pd.read_excel(xls, sheet_name=sheet_name_shu, header=None, engine='openpyxl')
+                week_options = []
+                week_data_map = {}
+                for i in range(1, len(df_week)):
+                    row_vals = df_week.iloc[i, 1:4].dropna().tolist()
+                    if len(row_vals) >= 3:
+                        col1 = str(row_vals[0]).replace('.0', '')
+                        def format_date(d):
+                            if isinstance(d, pd.Timestamp):
+                                if d.year >= 2019:
+                                    return f"R{d.year - 2018}.{d.month}.{d.day}"
+                                return f"{d.year}.{d.month}.{d.day}"
+                            return str(d).split()[0]
+                        col2 = format_date(row_vals[1])
+                        col3 = format_date(row_vals[2])
+                        week_str = f"【週案{col1}】　{col2} ～ {col3}"
+                        week_options.append(week_str)
+                        week_data_map[week_str] = {
+                            'week': col1,
+                            'start': row_vals[1],
+                            'end': row_vals[2]
+                        }
+                st.session_state.week_options = week_options
+                st.session_state.week_data_map = week_data_map
             else:
                 st.session_state.week_options = []
-                teacher_order = None
-                df = pd.read_excel(xls, sheet_name=0, header=header_row - 1, engine='openpyxl')
+                st.session_state.week_data_map = {}
+                
+            # 「割当設定」シートの読み込み
+            df = pd.read_excel(xls, sheet_name=sheet_name_wariate, header=header_row - 1, engine='openpyxl')
                 
             if start_col > 1:
                 df = df.iloc[:, (start_col - 1):]
