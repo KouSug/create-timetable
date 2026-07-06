@@ -716,14 +716,14 @@ def main():
             
         start_cell = st.session_state.get("start_cell", "B2")
         
-        st.markdown("#### 1. 設定ファイルの認識設定")
-        c1, c2 = st.columns([3, 1])
-        with c1:
-            st.info(f"表の開始セル: **{start_cell}**")
-        with c2:
-            if st.button("開始セルを変更", use_container_width=True):
-                st.session_state.dialog_completed = False
-                st.rerun()
+        with st.expander("1. 設定ファイルの認識設定（通常は変更不要です）", expanded=False):
+            c1, c2 = st.columns([3, 1])
+            with c1:
+                st.info(f"表の開始セル: **{start_cell}**")
+            with c2:
+                if st.button("開始セルを変更", use_container_width=True):
+                    st.session_state.dialog_completed = False
+                    st.rerun()
                 
         header_row, start_col = parse_cell_address(start_cell)
 
