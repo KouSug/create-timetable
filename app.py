@@ -717,8 +717,18 @@ def main():
     st.markdown("""
         <style>
         /* ファイルアップローダーをコンパクトなボタン型に変形するCSS */
-        [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] > *:not(button) {
+        /* ドラッグ＆ドロップ領域の不要なテキストやアイコンを消す */
+        [data-testid="stFileUploaderDropzoneInstructions"] {
             display: none !important;
+        }
+        [data-testid="stFileUploaderDropzone"] svg {
+            display: none !important;
+        }
+        [data-testid="stFileUploaderDropzone"] small {
+            display: none !important;
+        }
+        [data-testid="stFileUploaderDropzone"] {
+            color: transparent !important;
         }
         [data-testid="stFileUploaderDropzone"] {
             padding: 0 !important;
