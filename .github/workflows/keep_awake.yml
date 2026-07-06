@@ -2,15 +2,41 @@ name: Keep Streamlit App Awake
 
 on:
   schedule:
-    # 毎日UTCの午前0時（日本時間の午前9時）と、念のため12時間後にも実行
+    # 毎日UTCの午前0時と12時（日本時間の午前9時と午後9時）
     - cron: '0 0,12 * * *'
-  # 手動でも実行できるようにする
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Streamlit App
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Playwright
         run: |
-          curl -sSf https://create-timetable-gss8wrjtvmhizucoacuvtz.streamlit.app/ > /dev/null || echo "Ping failed, but workflow continues."
+          python -m pip install --upgrade pip
+          pip install playwright
+          playwright install chromium
+
+      - name: Ping Streamlit App with Headless Browser
+        run: |
+          python -c "
+          from playwright.sync_api import sync_playwright
+          print('Starting browser to ping the app...')
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              page = browser.new_page()
+              try:
+                  # アプリのURLにアクセス
+                  page.goto('https://create-timetable-gss8wrjtvmhizucoacuvtz.streamlit.app/', timeout=60000)
+                  # Streamlitの裏側の通信（WebSocket）が確立するまで10秒間待機する
+                  page.wait_for_timeout(10000)
+                  print('Successfully pinged the app and kept it awake.')
+              except Exception as e:
+                  print('Error occurred:', e)
+              finally:
+                  browser.close()
+          "
