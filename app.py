@@ -716,7 +716,7 @@ def main():
             
         start_cell = st.session_state.get("start_cell", "B2")
         
-        st.markdown("#### 1. Excel表の開始位置")
+        st.markdown("#### 1. 設定ファイルの認識設定")
         c1, c2 = st.columns([3, 1])
         with c1:
             st.info(f"表の開始セル: **{start_cell}**")
@@ -880,7 +880,7 @@ def main():
             original_timeslot_cols = columns[timeslot_start_idx:timeslot_end_idx + 1]
             
             st.markdown("---")
-            st.markdown("#### 3. 時間割枠の設定")
+            st.markdown("#### 3. 授業枠の設定")
             
             day_map = {}
             for col in original_timeslot_cols:
