@@ -991,7 +991,7 @@ def main():
                             val = df_order.iloc[i, 27]
                             if pd.notna(val) and str(val).strip() != "":
                                 try:
-                                    teacher_default_rows[t_name] = int(float(str(val).strip()))
+                                    teacher_default_rows[t_name] = int(float(str(val).strip())) + 20
                                 except ValueError:
                                     pass
             st.session_state.teacher_default_rows = teacher_default_rows
