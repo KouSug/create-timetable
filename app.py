@@ -768,7 +768,7 @@ def main():
         }
         /* 疑似要素でテキストを上書き */
         [data-testid="stFileUploader"] button::after {
-            content: "📁 ファイルを読み込む";
+            content: "📁 ファイルをアップロード";
             font-size: 1rem !important; /* 新しい文字のサイズ */
             font-weight: 600 !important;
             color: #333 !important;
