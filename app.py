@@ -282,9 +282,10 @@ def export_to_excel_template(df_class, df_teacher, teacher_row_mapping, selected
             ws = wb.copy_worksheet(wb["原本"])
         else:
             ws = wb.copy_worksheet(wb.worksheets[-1])
-        # 複製したシートの授業データ部分のみをクリア（E列以降のすべての行）
+        # 複製したシートの授業データ部分のみをクリア（E列からAL列までの行）
+        # AM列以降は消去しないように制限
         for row in range(4, ws.max_row + 1):
-            for col in range(START_COL_INDEX, ws.max_column + 1):
+            for col in range(START_COL_INDEX, min(ws.max_column, 38) + 1):
                 cell = ws.cell(row=row, column=col)
                 if type(cell).__name__ != 'MergedCell':
                     if cell.data_type != 'f':
