@@ -706,7 +706,12 @@ def main():
         </div>
     """, unsafe_allow_html=True)
 
-    uploaded_file = st.file_uploader("Excelファイルをドラッグ＆ドロップ", type=["xlsx", "xls", "xlsm"])
+    col_upload, col_btn = st.columns([3, 1])
+    with col_upload:
+        uploaded_file = st.file_uploader("Excelファイルをドラッグ＆ドロップ", type=["xlsx", "xls", "xlsm"])
+    with col_btn:
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        raw_data_btn_container = st.empty()
 
     if uploaded_file is not None:
         current_file_id = f"{uploaded_file.name}_{uploaded_file.size}"
@@ -798,8 +803,9 @@ def main():
                 df = df.iloc[:, (start_col - 1):]
                 
             st.success("ファイルの読み込みに成功しました！")
-            if st.button("📊 アップロードされた生データを確認", use_container_width=False):
-                show_raw_data_dialog(df)
+            with raw_data_btn_container:
+                if st.button("📊 アップロードされた生データを確認", use_container_width=True):
+                    show_raw_data_dialog(df)
                 
             st.markdown("---")
             st.markdown("#### 1. 項目の設定")
