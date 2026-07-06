@@ -1360,14 +1360,19 @@ def main():
                             start_date_str=start_date_parsed,
                             end_date_str=end_date_parsed,
                             teacher_subjects=teacher_subjects,
-                            nendo_str=nendo_str
+                            nendo_str=nendo_str,
+                            target_workbook_bytes=target_workbook_bytes,
+                            keep_vba_target=target_keep_vba
                         )
                         
                         mime_type = "application/vnd.ms-excel.sheet.macroEnabled.12" if ext == ".xlsm" else "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         
-                        out_filename = f"時間割_完成版{ext}"
-                        if week_str_parsed:
-                            out_filename = f"時間割_【週案{week_str_parsed}】{ext}"
+                        if export_mode == "既存のファイルに追記する" and target_filename:
+                            out_filename = target_filename
+                        else:
+                            out_filename = f"時間割_完成版{ext}"
+                            if week_str_parsed:
+                                out_filename = f"時間割_【週案{week_str_parsed}】{ext}"
 
                         st.success("書き込み準備が完了しました！下のボタンからダウンロードしてください。")
                         import base64
