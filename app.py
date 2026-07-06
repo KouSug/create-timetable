@@ -691,6 +691,10 @@ def start_cell_dialog():
         st.session_state.dialog_completed = True
         st.rerun()
 
+@st.dialog("アップロードされた生データ", width="large")
+def show_raw_data_dialog(df):
+    st.dataframe(df, use_container_width=True)
+
 def main():
     st.set_page_config(page_title="時間割自動作成アプリ", layout="wide")
     
@@ -794,8 +798,8 @@ def main():
                 df = df.iloc[:, (start_col - 1):]
                 
             st.success("ファイルの読み込みに成功しました！")
-            with st.expander("アップロードされた生データを確認", expanded=False):
-                st.dataframe(df, use_container_width=True)
+            if st.button("📊 アップロードされた生データを確認", use_container_width=False):
+                show_raw_data_dialog(df)
                 
             st.markdown("---")
             st.markdown("#### 1. 項目の設定")
