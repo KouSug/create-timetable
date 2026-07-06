@@ -716,14 +716,14 @@ def main():
             
         start_cell = st.session_state.get("start_cell", "B2")
         
-        with st.expander("1. 設定ファイルの認識設定（通常は変更不要です）", expanded=False):
-            c1, c2 = st.columns([3, 1])
-            with c1:
-                st.info(f"表の開始セル: **{start_cell}**")
-            with c2:
-                if st.button("開始セルを変更", use_container_width=True):
-                    st.session_state.dialog_completed = False
-                    st.rerun()
+        with st.sidebar:
+            st.markdown("### ⚙️ 詳細設定")
+            st.markdown("#### 設定ファイルの認識設定")
+            st.caption("※通常は変更不要です")
+            st.info(f"表の開始セル: **{start_cell}**")
+            if st.button("開始セルを変更", use_container_width=True):
+                st.session_state.dialog_completed = False
+                st.rerun()
                 
         header_row, start_col = parse_cell_address(start_cell)
 
@@ -798,7 +798,7 @@ def main():
                 st.dataframe(df, use_container_width=True)
                 
             st.markdown("---")
-            st.markdown("#### 2. 項目の設定")
+            st.markdown("#### 1. 項目の設定")
             st.markdown("Excelのどの列が何を表しているか選択してください。")
             
             columns = df.columns.tolist()
@@ -880,7 +880,7 @@ def main():
             original_timeslot_cols = columns[timeslot_start_idx:timeslot_end_idx + 1]
             
             st.markdown("---")
-            st.markdown("#### 3. 授業枠の設定")
+            st.markdown("#### 2. 授業枠の設定")
             
             day_map = {}
             for col in original_timeslot_cols:
