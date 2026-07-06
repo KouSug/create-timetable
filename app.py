@@ -775,14 +775,14 @@ def main():
         [data-testid="stFileUploaderDropzone"] button::after {
             content: "📁 ファイルをアップロード";
             font-size: 1rem !important; /* 新しい文字のサイズ */
-            font-weight: 600 !important;
-            color: #333 !important;
+            font-weight: normal !important; /* データ確認ボタンとフォントを合わせる */
+            color: #31333F !important;
         }
         </style>
     """, unsafe_allow_html=True)
 
     # アップロードボタンとデータ確認ボタンを極力左に詰めて並べる
-    col_upload, col_btn, col_empty = st.columns([1.3, 1, 2], vertical_alignment="bottom")
+    col_upload, col_btn, col_empty = st.columns([1.5, 0.7, 2.5], vertical_alignment="bottom")
     with col_upload:
         # accept_multiple_files=True にすることで、アップロード後も常にボタン（ドロップゾーン）を残す
         uploaded_files = st.file_uploader("設定ファイルの読み込み", type=["xlsx", "xls", "xlsm"], accept_multiple_files=True, label_visibility="collapsed")
