@@ -268,20 +268,31 @@ def check_feasibility_diagnostics(df, teacher_col, class_col, hours_col, timeslo
 
     return diagnostics
 
-def export_to_excel_template(df_class, df_teacher, teacher_row_mapping, selected_week_str=None, start_date_str=None, end_date_str=None, teacher_subjects=None, nendo_str=None):
+def export_to_excel_template(df_class, df_teacher, teacher_row_mapping, selected_week_str=None, start_date_str=None, end_date_str=None, teacher_subjects=None, nendo_str=None, target_workbook_bytes=None, keep_vba_target=False):
     from openpyxl import load_workbook
     from io import BytesIO
     import re
     import unicodedata
     import os
     
-    if not os.path.exists(TEMPLATE_FILE_PATH):
-        raise FileNotFoundError(f"テンプレートファイルが見つかりません。同じフォルダに 'template.xlsx' または 'template.xlsm' を置いてください。")
-        
-    keep_vba = TEMPLATE_FILE_PATH.endswith('.xlsm')
-    wb = load_workbook(TEMPLATE_FILE_PATH, keep_vba=keep_vba, keep_links=False)
-    # 確実に1シート目を指定
-    ws = wb.worksheets[0]
+    if target_workbook_bytes is not None:
+        wb = load_workbook(BytesIO(target_workbook_bytes), keep_vba=keep_vba_target, keep_links=False)
+        # 最後のシートを複製
+        ws = wb.copy_worksheet(wb.worksheets[-1])
+        # 複製したシートの授業データ部分のみをクリア（E列以降のすべての行）
+        for row in range(4, ws.max_row + 1):
+            for col in range(START_COL_INDEX, ws.max_column + 1):
+                cell = ws.cell(row=row, column=col)
+                if type(cell).__name__ != 'MergedCell':
+                    cell.value = None
+    else:
+        if not os.path.exists(TEMPLATE_FILE_PATH):
+            raise FileNotFoundError(f"テンプレートファイルが見つかりません。同じフォルダに 'template.xlsx' または 'template.xlsm' を置いてください。")
+            
+        keep_vba = TEMPLATE_FILE_PATH.endswith('.xlsm')
+        wb = load_workbook(TEMPLATE_FILE_PATH, keep_vba=keep_vba, keep_links=False)
+        # 確実に1シート目を指定
+        ws = wb.worksheets[0]
     
     if selected_week_str:
         ws.title = str(selected_week_str)[:31]
@@ -349,7 +360,13 @@ def export_to_excel_template(df_class, df_teacher, teacher_row_mapping, selected
     output = BytesIO()
     wb.save(output)
     output.seek(0)
-    return output.getvalue(), TEMPLATE_EXT
+    
+    if target_workbook_bytes is not None:
+        ret_ext = '.xlsm' if keep_vba_target else '.xlsx'
+    else:
+        ret_ext = '.xlsm' if TEMPLATE_FILE_PATH.endswith('.xlsm') else '.xlsx'
+        
+    return output.getvalue(), ret_ext
 
 def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, subject_cols, tt_col=None, lecturer_col=None, block_class_on_fixed=False, teacher_order=None, original_timeslot_cols=None, progress_bar=None, status_text=None):
     if original_timeslot_cols is None:
@@ -1251,8 +1268,26 @@ def main():
                 # data_editorの出力を受け取るが、session_stateには上書きしない（Streamlitの仕様によるリセットを防ぐため）
                 with st.expander("教員の出力先"):
                     edited_mapping_df = st.data_editor(st.session_state.teacher_mapping_df, use_container_width=True, hide_index=True)
+                
+                st.markdown("##### 出力設定")
+                export_mode = st.radio("出力方式", options=["新規作成（テンプレート使用）", "既存のファイルに追記する"], horizontal=True, label_visibility="collapsed")
+                target_workbook_bytes = None
+                target_keep_vba = False
+                target_filename = ""
+                
+                if export_mode == "既存のファイルに追記する":
+                    uploaded_target = st.file_uploader("追記先のExcelファイルを選択（先週までのファイル等）", type=['xlsx', 'xlsm'])
+                    if uploaded_target:
+                        target_workbook_bytes = uploaded_target.getvalue()
+                        target_keep_vba = uploaded_target.name.endswith('.xlsm')
+                        target_filename = uploaded_target.name
+                
+                disable_export = (export_mode == "既存のファイルに追記する" and not target_workbook_bytes)
+                if disable_export:
+                    st.info("👆 追記先のファイルをアップロードすると出力ボタンが押せるようになります。")
+
                 st.markdown('<span class="excel-btn-marker"></span>', unsafe_allow_html=True)
-                if st.button("Excel出力", type="primary", use_container_width=True):
+                if st.button("Excel出力", type="primary", use_container_width=True, disabled=disable_export):
                     try:
                         teacher_row_mapping = {}
                         for _, row in edited_mapping_df.iterrows():
