@@ -688,7 +688,6 @@ def start_cell_dialog():
     cell = st.text_input("開始セル（例: B2）", value=st.session_state.get("start_cell", "B2"))
     if st.button("決定", use_container_width=True):
         st.session_state.start_cell = cell
-        st.session_state.dialog_completed = True
         st.rerun()
 
 @st.dialog("アップロードされた生データ", width="large")
@@ -716,11 +715,6 @@ def main():
         current_file_id = f"{uploaded_file.name}_{uploaded_file.size}"
         if st.session_state.get("last_uploaded_file") != current_file_id:
             st.session_state.last_uploaded_file = current_file_id
-            st.session_state.dialog_completed = False
-
-        if not st.session_state.get("dialog_completed", False):
-            start_cell_dialog()
-            st.stop()
             
         start_cell = st.session_state.get("start_cell", "B2")
         
@@ -730,8 +724,7 @@ def main():
             st.caption("※通常は変更不要です")
             st.info(f"表の開始セル: **{start_cell}**")
             if st.button("開始セルを変更", use_container_width=True):
-                st.session_state.dialog_completed = False
-                st.rerun()
+                start_cell_dialog()
                 
         header_row, start_col = parse_cell_address(start_cell)
 
