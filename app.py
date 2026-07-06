@@ -1092,24 +1092,30 @@ def main():
                 week_options = []
                 week_data_map = {}
                 for i in range(1, len(df_week)):
-                    row_vals = df_week.iloc[i, 1:4].dropna().tolist()
-                    if len(row_vals) >= 3:
-                        col1 = str(row_vals[0]).replace('.0', '')
-                        def format_date(d):
-                            if isinstance(d, pd.Timestamp):
-                                if d.year >= 2019:
-                                    return f"R{d.year - 2018}.{d.month}.{d.day}"
-                                return f"{d.year}.{d.month}.{d.day}"
-                            return str(d).split()[0]
-                        col2 = format_date(row_vals[1])
-                        col3 = format_date(row_vals[2])
-                        week_str = f"【週案{col1}】　{col2} ～ {col3}"
-                        week_options.append(week_str)
-                        week_data_map[week_str] = {
-                            'week': col1,
-                            'start': row_vals[1],
-                            'end': row_vals[2]
-                        }
+                    try:
+                        week_num = df_week.iloc[i, 1] if df_week.shape[1] > 1 else None
+                        start_date = df_week.iloc[i, 3] if df_week.shape[1] > 3 else None
+                        end_date = df_week.iloc[i, 4] if df_week.shape[1] > 4 else None
+                        
+                        if pd.notna(week_num) and pd.notna(start_date) and pd.notna(end_date):
+                            col1 = str(week_num).replace('.0', '')
+                            def format_date(d):
+                                if isinstance(d, pd.Timestamp):
+                                    if d.year >= 2019:
+                                        return f"R{d.year - 2018}.{d.month}.{d.day}"
+                                    return f"{d.year}.{d.month}.{d.day}"
+                                return str(d).split()[0]
+                            col2 = format_date(start_date)
+                            col3 = format_date(end_date)
+                            week_str = f"【週案{col1}】　{col2} ～ {col3}"
+                            week_options.append(week_str)
+                            week_data_map[week_str] = {
+                                'week': col1,
+                                'start': start_date,
+                                'end': end_date
+                            }
+                    except Exception:
+                        pass
                 st.session_state.week_options = week_options
                 st.session_state.week_data_map = week_data_map
             else:
