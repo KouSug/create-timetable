@@ -729,12 +729,10 @@ def main():
             width: max-content !important; /* 余白がクリック可能になるのを防ぐため、幅をボタンに合わせる */
         }
         
-        /* stFileUploader全体の余白を消去し、縦ズレを防止。さらに相対位置で下に押し下げて横のボタンと完璧に揃える */
+        /* stFileUploader全体の余白を消去し、縦ズレを防止 */
         [data-testid="stFileUploader"] {
             margin: 0 !important;
             padding: 0 !important;
-            position: relative !important;
-            top: 14px !important;
         }
         
         /* Dropzone内の全要素の文字サイズを0にして、不要なテキスト（上限表示等）を空間ごと完全に消滅させる */
@@ -758,31 +756,29 @@ def main():
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] > * {
             display: none !important;
         }
-        /* ボタンのデザインをデータ確認ボタンに合わせる */
+        /* ボタンのデザインを他の標準ボタン（データ確認、クリア）に合わせる */
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] {
             font-size: 0 !important; /* 元の文字を幅ごと完全に消す */
             color: transparent !important;
-            background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%) !important;
-            border: 1px solid #ccc !important;
+            background-color: #ffffff !important;
+            border: 1px solid rgba(49, 51, 63, 0.2) !important;
             border-radius: 8px !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
             transition: all 0.2s ease !important;
             width: 100% !important; /* 幅いっぱいに広げる */
             padding: 8px 16px !important;
+            margin-top: 14px !important; /* ボタン自身を下に押し下げて横のボタンと高さを完璧に合わせる */
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
         }
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:hover {
-            background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%) !important;
-            border-color: #aaa !important;
-            transform: translateY(-1px) !important;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
+            border-color: #FF4B4B !important;
+            color: #FF4B4B !important;
         }
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:active {
-            transform: translateY(1px) !important;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+            background-color: #FF4B4B !important;
+            color: #ffffff !important;
         }
         /* 疑似要素でテキストを上書き */
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]::after {
