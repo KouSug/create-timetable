@@ -1291,7 +1291,7 @@ def main():
                 st.markdown("---")
                 st.markdown("#### 高度な制約設定")
                 prohibited_subjects = st.multiselect(
-                    "同時並行を禁止する教科（特別教室の被り防止など）", 
+                    "同時並行を禁止する教科", 
                     unique_subjects, 
                     help="選択した教科は、全クラスを通じて同じ時間帯（コマ）に1つしか配置されなくなります。（※少人数ペアに指定された合同授業は1つとカウントされます）"
                 )
