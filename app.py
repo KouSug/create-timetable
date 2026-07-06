@@ -730,9 +730,11 @@ def main():
         }
         
         /* stFileUploader全体の余白を消去し、縦ズレを防止 */
-        [data-testid="stFileUploader"] {
-            margin: 0 !important;
-            padding: 0 !important;
+        [data-testid="stFileUploader"],
+        [data-testid="stFileUploader"] > div,
+        [data-testid="stButton"] {
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
         }
         
         /* Dropzoneより下にある要素（200MB制限テキストなど）を完全に非表示にする */
