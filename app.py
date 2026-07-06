@@ -726,6 +726,38 @@ def main():
             background-color: transparent !important;
             min-height: auto !important;
         }
+        /* ボタンのデザインをデータ確認ボタンに合わせる */
+        [data-testid="stFileUploader"] button {
+            color: transparent !important;
+            position: relative !important;
+            background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%) !important;
+            border: 1px solid #ccc !important;
+            font-weight: 600 !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+            transition: all 0.2s ease !important;
+            width: 100% !important;
+        }
+        [data-testid="stFileUploader"] button:hover {
+            background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%) !important;
+            border-color: #aaa !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
+        }
+        [data-testid="stFileUploader"] button:active {
+            transform: translateY(1px) !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+        }
+        /* 疑似要素でテキストを上書き */
+        [data-testid="stFileUploader"] button::after {
+            content: "📁 ファイルをアップロード";
+            color: #333 !important;
+            position: absolute !important;
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 100% !important;
+            pointer-events: none !important;
+        }
         </style>
     """, unsafe_allow_html=True)
 
