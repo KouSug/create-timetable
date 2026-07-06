@@ -737,29 +737,20 @@ def main():
             min-height: auto !important;
             width: max-content !important; /* 余白がクリック可能になるのを防ぐため、幅をボタンに合わせる */
         }
-        /* Streamlitデフォルトのアップロード済みファイル一覧UIを完全に非表示にする */
-        [data-testid="stFileUploader"] ul,
-        [data-testid="stUploadedFileList"], 
-        [data-testid="stUploadedFile"],
-        [data-testid="stFileUploaderFile"],
-        [data-testid="stFileUploaderDropzone"] ~ div,
-        [data-testid="stFileUploaderDropzone"] ~ ul,
-        [data-testid="stFileUploaderDropzone"] ~ section {
-            display: none !important;
-            height: 0 !important;
-            opacity: 0 !important;
-            overflow: hidden !important;
-            position: absolute !important;
-            z-index: -999 !important;
-        }
-
-
-        /* ボタン内の不要なアイコン等を消去（ドロップゾーンのみ対象） */
-        [data-testid="stFileUploaderDropzone"] button > * {
+        /* Streamlitデフォルトのアップロード済みファイル一覧UIを完全に非表示にする（Dropzone内・外両方対応） */
+        [data-testid="stFileUploaderDropzone"] > div:not([data-testid="stFileUploaderDropzoneInstructions"]) {
             display: none !important;
         }
-        /* ボタンのデザインをデータ確認ボタンに合わせる（ドロップゾーンのみ対象） */
-        [data-testid="stFileUploaderDropzone"] button {
+        [data-testid="stFileUploader"] > div > *:not([data-testid="stFileUploaderDropzone"]) {
+            display: none !important;
+        }
+
+        /* ボタン内の不要なアイコン等を消去 */
+        [data-testid="stFileUploaderDropzoneInstructions"] button > * {
+            display: none !important;
+        }
+        /* ボタンのデザインをデータ確認ボタンに合わせる */
+        [data-testid="stFileUploaderDropzoneInstructions"] button {
             font-size: 0 !important; /* 元の文字を幅ごと完全に消す */
             color: transparent !important;
             background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%) !important;
@@ -774,18 +765,18 @@ def main():
             justify-content: center !important;
             text-align: center !important;
         }
-        [data-testid="stFileUploaderDropzone"] button:hover {
+        [data-testid="stFileUploaderDropzoneInstructions"] button:hover {
             background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%) !important;
             border-color: #aaa !important;
             transform: translateY(-1px) !important;
             box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
         }
-        [data-testid="stFileUploaderDropzone"] button:active {
+        [data-testid="stFileUploaderDropzoneInstructions"] button:active {
             transform: translateY(1px) !important;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
         }
-        /* 疑似要素でテキストを上書き（ドロップゾーンのみ対象） */
-        [data-testid="stFileUploaderDropzone"] button::after {
+        /* 疑似要素でテキストを上書き */
+        [data-testid="stFileUploaderDropzoneInstructions"] button::after {
             content: "📁 ファイルをアップロード";
             font-size: 16px !important; /* データ確認ボタンとフォントサイズを合わせる */
             font-weight: normal !important; /* データ確認ボタンとフォントを合わせる */
