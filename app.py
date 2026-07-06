@@ -737,15 +737,9 @@ def main():
             min-height: auto !important;
             width: max-content !important; /* 余白がクリック可能になるのを防ぐため、幅をボタンに合わせる */
         }
-        /* アップロード完了後のファイルアイコン（黒い四角）を消去 */
-        [data-testid="stFileUploader"] svg {
+        /* Streamlitデフォルトのアップロード済みファイル一覧UIを完全に非表示にする */
+        [data-testid="stUploadedFileList"], [data-testid="stUploadedFile"] {
             display: none !important;
-        }
-        /* アップロード完了後のファイルの枠線や背景を透明にする（赤い枠などが出ないように） */
-        [data-testid="stUploadedFile"] {
-            border: none !important;
-            background-color: transparent !important;
-            box-shadow: none !important;
         }
         /* ボタン内の不要なアイコン等を消去（ドロップゾーンのみ対象） */
         [data-testid="stFileUploaderDropzone"] button > * {
@@ -787,14 +781,20 @@ def main():
         </style>
     """, unsafe_allow_html=True)
 
-    # アップロードボタンとデータ確認ボタンを近づけるためにカラム比率を [1, 1] 等に変更（余白として右側に空の[1, 1]を足す）
-    col_upload, col_btn, col_empty = st.columns([2, 1, 1], vertical_alignment="bottom")
+    # アップロードボタンとデータ確認ボタンを極力左に詰めて並べる
+    col_upload, col_btn, col_empty = st.columns([1.3, 1, 2], vertical_alignment="bottom")
     with col_upload:
-        uploaded_file = st.file_uploader("設定ファイルの読み込み", type=["xlsx", "xls", "xlsm"], label_visibility="collapsed")
+        # accept_multiple_files=True にすることで、アップロード後も常にボタン（ドロップゾーン）を残す
+        uploaded_files = st.file_uploader("設定ファイルの読み込み", type=["xlsx", "xls", "xlsm"], accept_multiple_files=True, label_visibility="collapsed")
     with col_btn:
         raw_data_btn_container = st.container()
 
+    uploaded_file = uploaded_files[-1] if uploaded_files else None
+
     if uploaded_file is not None:
+        # デフォルトUIを消した代わりに、テキストだけでファイル名とサイズを表示する
+        st.markdown(f"<div style='margin-top: -10px; margin-bottom: 20px; color: #444; font-size: 0.95rem;'>📄 <b>{uploaded_file.name}</b> ({uploaded_file.size / 1024:.1f} KB)</div>", unsafe_allow_html=True)
+        
         current_file_id = f"{uploaded_file.name}_{uploaded_file.size}"
         if st.session_state.get("last_uploaded_file") != current_file_id:
             st.session_state.last_uploaded_file = current_file_id
