@@ -717,20 +717,10 @@ def main():
     st.markdown("""
         <style>
         /* ファイルアップローダーをコンパクトなボタン型に変形するCSS */
-        /* ドラッグ＆ドロップ領域の不要なテキストやアイコンを消す */
-        [data-testid="stFileUploaderDropzoneInstructions"] > *:not(button) {
-            display: none !important;
-        }
-        [data-testid="stFileUploaderDropzone"] svg {
-            display: none !important;
-        }
-        [data-testid="stFileUploaderDropzone"] small {
-            display: none !important;
-        }
+        /* ドラッグ＆ドロップ領域の不要なテキストやアイコンを消すための安全なCSS */
+        /* Dropzone全体に影響（文字を透明化） */
         [data-testid="stFileUploaderDropzone"] {
             color: transparent !important;
-        }
-        [data-testid="stFileUploaderDropzone"] {
             padding: 0 !important;
             border: none !important;
             background-color: transparent !important;
@@ -738,7 +728,22 @@ def main():
             width: max-content !important; /* 余白がクリック可能になるのを防ぐため、幅をボタンに合わせる */
         }
         
-        /* Streamlitデフォルトのアップロード済みファイル一覧UIを完全に非表示にする */
+        /* Dropzone内のSVGアイコン（雲マークやファイルアイコン）をすべて消去 */
+        [data-testid="stFileUploaderDropzone"] svg {
+            display: none !important;
+        }
+        
+        /* Dropzone内のsmallタグ（ファイルサイズや上限表示）をすべて消去 */
+        [data-testid="stFileUploaderDropzone"] small {
+            display: none !important;
+        }
+
+        /* 削除ボタン（'Browse files' 以外のボタン）を非表示にする */
+        [data-testid="stFileUploaderDropzone"] button:not([data-testid="stBaseButton-secondary"]) {
+            display: none !important;
+        }
+
+        /* Streamlitデフォルトのアップロード済みファイル一覧UI（Dropzone外に出た場合）を完全に非表示にする */
         [data-testid="stFileUploader"] ul,
         [data-testid="stUploadedFileList"], 
         [data-testid="stUploadedFile"],
@@ -753,15 +758,8 @@ def main():
             position: absolute !important;
             z-index: -999 !important;
         }
-        
-        /* 万が一Dropzone内にファイルリストが入る場合のためのフェイルセーフ */
-        [data-testid="stFileUploaderDropzone"] div:has(button[aria-label*="emove"]) {
-            display: none !important;
-            height: 0 !important;
-            opacity: 0 !important;
-        }
 
-        /* ボタン内の不要なアイコン等を消去（アップロードボタンのみを狙い撃ち） */
+        /* アップロードボタン内の不要なアイコン等を消去 */
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] > * {
             display: none !important;
         }
