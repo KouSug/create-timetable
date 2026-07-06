@@ -721,11 +721,18 @@ def main():
         /* Dropzone全体に影響（文字を透明化してデフォルトテキストを消去） */
         [data-testid="stFileUploaderDropzone"] {
             color: transparent !important;
+            margin: 0 !important;
             padding: 0 !important;
             border: none !important;
             background-color: transparent !important;
             min-height: auto !important;
             width: max-content !important; /* 余白がクリック可能になるのを防ぐため、幅をボタンに合わせる */
+        }
+        
+        /* stFileUploader全体の余白を消去し、縦ズレを防止 */
+        [data-testid="stFileUploader"] {
+            margin: 0 !important;
+            padding: 0 !important;
         }
         
         /* Dropzone内の全要素の文字サイズを0にして、不要なテキスト（上限表示等）を空間ごと完全に消滅させる */
@@ -791,7 +798,7 @@ def main():
         st.session_state.saved_file = None
 
     # アップロードボタンとデータ確認ボタンの隙間を最小限にするため、カラム幅を詰める
-    col_upload, col_btn, col_clear, col_empty = st.columns([0.9, 0.7, 0.7, 2.5], vertical_alignment="bottom")
+    col_upload, col_btn, col_clear, col_empty = st.columns([0.9, 0.7, 0.7, 2.5], vertical_alignment="center")
     with col_upload:
         # StreamlitのファイルリストUIを出さないため、アップロード直後にウィジェットを強制リセットする
         uploaded_files = st.file_uploader("設定ファイルの読み込み", type=["xlsx", "xls", "xlsm"], accept_multiple_files=True, label_visibility="collapsed", key=f"uploader_{st.session_state.uploader_key}")
