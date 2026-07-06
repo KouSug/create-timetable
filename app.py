@@ -822,10 +822,10 @@ def main():
             box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
         }
         
-        /* プライマリボタン（時間割作成など）を美しい緑のグラデーションに変更 */
+        /* プライマリボタン（時間割作成など）を美しい青のグラデーションに変更 */
         [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-primary"] {
-            background: linear-gradient(180deg, #68D391 0%, #38A169 100%) !important;
-            border: 1px solid #2F855A !important;
+            background: linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%) !important;
+            border: 1px solid #2563EB !important;
             border-radius: 8px !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
             transition: all 0.2s ease !important;
@@ -835,8 +835,8 @@ def main():
             font-weight: 600 !important;
         }
         [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-primary"]:hover {
-            background: linear-gradient(180deg, #9AE6B4 0%, #48BB78 100%) !important;
-            border-color: #2F855A !important;
+            background: linear-gradient(180deg, #93C5FD 0%, #60A5FA 100%) !important;
+            border-color: #2563EB !important;
             box-shadow: 0 3px 6px rgba(0,0,0,0.25) !important;
             transform: translateY(-1px) !important;
         }
@@ -846,7 +846,7 @@ def main():
         [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-primary"]:active {
             transform: translateY(1px) !important;
             box-shadow: 0 1px 2px rgba(0,0,0,0.15) !important;
-            background: linear-gradient(180deg, #38A169 0%, #2F855A 100%) !important;
+            background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%) !important;
         }
         
         /* Excel出力ボタンの先頭にExcelアイコンを付与する */
