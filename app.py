@@ -936,6 +936,10 @@ def main():
                 st.markdown("""
                 <span class="raw-data-marker"></span>
                 <style>
+                /* CSSを仕込んでいるこのMarkdownブロック自体を非表示にして余白を消去 */
+                div.element-container:has(.raw-data-marker) {
+                    display: none !important;
+                }
                 div.element-container:has(.raw-data-marker) + div.element-container div[data-testid="stButton"] button {
                     background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%);
                     border: 1px solid #ccc;
