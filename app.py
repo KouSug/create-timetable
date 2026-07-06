@@ -383,7 +383,7 @@ def export_to_excel_template(df_class, df_teacher, teacher_row_mapping, selected
         
     return output.getvalue(), ret_ext
 
-def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, subject_cols, tt_col=None, lecturer_col=None, block_class_on_fixed=False, teacher_order=None, original_timeslot_cols=None, progress_bar=None, status_text=None):
+def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, subject_cols, tt_col=None, lecturer_col=None, block_class_on_fixed=False, teacher_order=None, original_timeslot_cols=None, progress_bar=None, status_text=None, prohibited_subjects=None):
     if original_timeslot_cols is None:
         original_timeslot_cols = timeslot_cols
         
@@ -562,6 +562,35 @@ def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, sub
                         vars_for_day.append(assign[(idx, p)])
             if vars_for_day:
                 model.Add(sum(vars_for_day) <= max_per_day)
+
+    # 特定教科の同時並行禁止ルールの追加
+    if prohibited_subjects:
+        for subj in prohibited_subjects:
+            subj_rows = set()
+            for idx, row in df.iterrows():
+                has_subj = False
+                if subject_cols:
+                    for s_col in subject_cols:
+                        if pd.notna(row[s_col]) and str(row[s_col]).strip() == subj:
+                            has_subj = True
+                            break
+                if has_subj:
+                    in_group = False
+                    for g_idx_list in tt_groups.values():
+                        if idx in g_idx_list:
+                            subj_rows.add(g_idx_list[0])
+                            in_group = True
+                            break
+                    if not in_group:
+                        subj_rows.add(idx)
+            
+            for p in range(num_timeslots):
+                vars_in_p = []
+                for idx in subj_rows:
+                    if (idx, p) in assign:
+                        vars_in_p.append(assign[(idx, p)])
+                if vars_in_p:
+                    model.Add(sum(vars_in_p) <= 1)
 
     # 全体として「優先度の高い授業からできるだけ多く配置する」ようAIに指示（最適化）
     model.Maximize(sum(all_weighted_assign_vars))
@@ -1186,8 +1215,24 @@ def main():
                                 default_subjects.append(col)
                             break
                 subject_cols = st.multiselect("教科名（複数選択可）", columns, default=default_subjects)
+                
+                unique_subjects = set()
+                if subject_cols:
+                    for s_col in subject_cols:
+                        for val in df[s_col].dropna().unique():
+                            v = str(val).strip()
+                            if v and v != "Unknown":
+                                unique_subjects.add(v)
+                unique_subjects = sorted(list(unique_subjects))
+                
             with c4:
                 hours_col = st.selectbox("時数（週）", options_with_none, index=get_idx("時数(週)"))
+                
+            prohibited_subjects = st.multiselect(
+                "同時並行を禁止する教科（特別教室の被り防止など）", 
+                unique_subjects, 
+                help="選択した教科は、全クラスを通じて同じ時間帯（コマ）に1つしか配置されなくなります。（※少人数ペアに指定された合同授業は1つとカウントされます）"
+            )
                 
             c5, c6, c7, c8 = st.columns(4)
             with c5:
@@ -1301,7 +1346,7 @@ def main():
                         st.session_state.diagnostics = ["対象となる授業データが見つかりませんでした。絞り込み条件とExcelデータを確認してください。"]
                     else:
                         success, df_class, df_teacher, is_timeout, unplaced_info = generate_timetable(
-                            target_df, teacher_col, class_col, hours_col, timeslot_cols, subject_cols, tt_col, lecturer_col, block_class_on_fixed, teacher_order, original_timeslot_cols=original_timeslot_cols, progress_bar=progress_bar, status_text=status_text
+                            target_df, teacher_col, class_col, hours_col, timeslot_cols, subject_cols, tt_col, lecturer_col, block_class_on_fixed, teacher_order, original_timeslot_cols=original_timeslot_cols, progress_bar=progress_bar, status_text=status_text, prohibited_subjects=prohibited_subjects
                         )
                     
                 if success:
