@@ -824,8 +824,8 @@ def main():
         
         /* プライマリボタン（時間割作成など）を美しい緑のグラデーションに変更 */
         [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-primary"] {
-            background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%) !important;
-            border: 1px solid #2E7D32 !important;
+            background: linear-gradient(180deg, #68D391 0%, #38A169 100%) !important;
+            border: 1px solid #2F855A !important;
             border-radius: 8px !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
             transition: all 0.2s ease !important;
@@ -835,8 +835,8 @@ def main():
             font-weight: 600 !important;
         }
         [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-primary"]:hover {
-            background: linear-gradient(180deg, #66BB6A 0%, #43A047 100%) !important;
-            border-color: #388E3C !important;
+            background: linear-gradient(180deg, #9AE6B4 0%, #48BB78 100%) !important;
+            border-color: #2F855A !important;
             box-shadow: 0 3px 6px rgba(0,0,0,0.25) !important;
             transform: translateY(-1px) !important;
         }
@@ -846,7 +846,7 @@ def main():
         [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-primary"]:active {
             transform: translateY(1px) !important;
             box-shadow: 0 1px 2px rgba(0,0,0,0.15) !important;
-            background: linear-gradient(180deg, #388E3C 0%, #2E7D32 100%) !important;
+            background: linear-gradient(180deg, #38A169 0%, #2F855A 100%) !important;
         }
         </style>
     """, unsafe_allow_html=True)
