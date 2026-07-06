@@ -735,15 +735,10 @@ def main():
             padding: 0 !important;
         }
         
-        /* Dropzone内の全要素の文字サイズを0にして、不要なテキスト（上限表示等）を空間ごと完全に消滅させる */
-        [data-testid="stFileUploaderDropzone"] * {
-            font-size: 0 !important;
-            color: transparent !important;
-            line-height: 0 !important;
-        }
-        
-        /* Dropzone内のボタン以外の要素（不要なテキストやアイコン）を完全に空間ごと消去 */
-        [data-testid="stFileUploaderDropzone"] > :not(button) {
+        /* Dropzone内の不要なテキストやアイコンを安全に消去 */
+        [data-testid="stFileUploaderDropzone"] svg,
+        [data-testid="stFileUploaderDropzone"] small,
+        [data-testid="stFileUploaderDropzone"] [data-testid="stMarkdownContainer"] {
             display: none !important;
         }
         
@@ -751,34 +746,42 @@ def main():
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] > * {
             display: none !important;
         }
-        /* ボタンのデザインを他の標準ボタン（データ確認、クリア）に合わせる */
+        
+        /* ボタンのデザインを他の標準ボタン（データ確認、クリア）に完璧に合わせる */
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] {
-            font-size: 0 !important; /* 元の文字を幅ごと完全に消す */
-            color: transparent !important;
+            color: transparent !important; /* 文字を見えなくするだけで、本来の寸法（高さ・余白）は維持する */
             background-color: #ffffff !important;
             border: 1px solid rgba(49, 51, 63, 0.2) !important;
             border-radius: 8px !important;
             transition: all 0.2s ease !important;
             width: 100% !important; /* 幅いっぱいに広げる */
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            text-align: center !important;
+            position: relative !important; /* ::afterを絶対配置するための基準 */
         }
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:hover {
             border-color: #FF4B4B !important;
-            color: #FF4B4B !important;
+            color: transparent !important; /* hover時も透明を維持 */
         }
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:active {
             background-color: #FF4B4B !important;
-            color: #ffffff !important;
+            color: transparent !important;
         }
-        /* 疑似要素でテキストを上書き */
+        /* 疑似要素でテキストを上書き（ボタンの寸法を変えずに中央配置） */
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]::after {
             content: "📁 ファイルをアップロード";
-            font-size: 16px !important; /* データ確認ボタンとフォントサイズを合わせる */
-            font-weight: normal !important; /* データ確認ボタンとフォントを合わせる */
+            position: absolute !important;
+            left: 0; right: 0; top: 0; bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px !important;
+            font-weight: normal !important;
             color: #31333F !important;
+        }
+        [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:hover::after {
+            color: #FF4B4B !important;
+        }
+        [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:active::after {
+            color: #ffffff !important;
         }
         </style>
     """, unsafe_allow_html=True)
