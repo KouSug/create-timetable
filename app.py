@@ -289,7 +289,7 @@ def export_to_excel_template(df_class, df_teacher, teacher_row_mapping, selected
         try:
             for cf in src_ws.conditional_formatting:
                 for rule in cf.rules:
-                    ws.conditional_formatting.add(cf.sqref, copy.deepcopy(rule))
+                    ws.conditional_formatting.add(str(cf.sqref), copy.deepcopy(rule))
         except Exception:
             pass
         # 複製したシートの授業データ部分のみをクリア（E列からAL列までの行）
