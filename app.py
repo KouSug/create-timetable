@@ -735,10 +735,11 @@ def main():
             padding: 0 !important;
         }
         
-        /* Dropzone内の不要なテキストやアイコンを安全に消去 */
+        /* Dropzone内外の不要なテキスト（200MB制限など）やアイコンを安全に消去 */
         [data-testid="stFileUploaderDropzone"] svg,
-        [data-testid="stFileUploaderDropzone"] small,
-        [data-testid="stFileUploaderDropzone"] [data-testid="stMarkdownContainer"] {
+        [data-testid="stFileUploaderDropzone"] [data-testid="stMarkdownContainer"],
+        [data-testid="stFileUploader"] small,
+        [data-testid="stFileUploaderInstructions"] {
             display: none !important;
         }
         
@@ -749,13 +750,18 @@ def main():
         
         /* ボタンのデザインを他の標準ボタン（データ確認、クリア）に完璧に合わせる */
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] {
-            color: transparent !important; /* 文字を見えなくするだけで、本来の寸法（高さ・余白）は維持する */
+            font-size: 0 !important; /* 元の文字を幅ごと完全に消す */
+            color: transparent !important;
             background-color: #ffffff !important;
             border: 1px solid rgba(49, 51, 63, 0.2) !important;
             border-radius: 8px !important;
             transition: all 0.2s ease !important;
             width: 100% !important; /* 幅いっぱいに広げる */
-            position: relative !important; /* ::afterを絶対配置するための基準 */
+            min-height: 38px !important; /* 高さをデータ確認ボタンと完全に一致させる */
+            padding: 0 16px !important; /* 左右の余白を適切に設定 */
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]:hover {
             border-color: #FF4B4B !important;
@@ -765,12 +771,10 @@ def main():
             background-color: #FF4B4B !important;
             color: transparent !important;
         }
-        /* 疑似要素でテキストを上書き（ボタンの寸法を変えずに中央配置） */
+        /* 疑似要素でテキストを上書き（ボタンの寸法を自動拡張させるため絶対配置は使わない） */
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"]::after {
             content: "📁 ファイルをアップロード";
-            position: absolute !important;
-            left: 0; right: 0; top: 0; bottom: 0;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             font-size: 16px !important;
