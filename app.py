@@ -283,6 +283,9 @@ def export_to_excel_template(df_class, df_teacher, teacher_row_mapping, selected
     # 確実に1シート目を指定
     ws = wb.worksheets[0]
     
+    if selected_week_str:
+        ws.title = str(selected_week_str)[:31]
+
     if nendo_str:
         ws['A2'] = nendo_str
         
