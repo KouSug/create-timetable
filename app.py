@@ -738,9 +738,16 @@ def main():
             width: max-content !important; /* 余白がクリック可能になるのを防ぐため、幅をボタンに合わせる */
         }
         /* Streamlitデフォルトのアップロード済みファイル一覧UIを完全に非表示にする */
-        [data-testid="stUploadedFileList"], [data-testid="stUploadedFile"] {
+        [data-testid="stFileUploader"] ul,
+        [data-testid="stUploadedFileList"], 
+        [data-testid="stUploadedFile"],
+        [data-testid="stFileUploaderFile"] {
             display: none !important;
+            height: 0 !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
         }
+
         /* ボタン内の不要なアイコン等を消去（ドロップゾーンのみ対象） */
         [data-testid="stFileUploaderDropzone"] button > * {
             display: none !important;
@@ -793,7 +800,8 @@ def main():
 
     if uploaded_file is not None:
         # デフォルトUIを消した代わりに、テキストだけでファイル名とサイズを表示する
-        st.markdown(f"<div style='margin-top: -10px; margin-bottom: 20px; color: #444; font-size: 0.95rem;'>📄 <b>{uploaded_file.name}</b> ({uploaded_file.size / 1024:.1f} KB)</div>", unsafe_allow_html=True)
+        excel_icon_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="16px" height="16px" style="vertical-align: middle; margin-right: 5px; margin-top: -2px;"><path fill="#4CAF50" d="M41,10H25v28h16c0.553,0,1-0.447,1-1V11C42,10.447,41.553,10,41,10z"/><path fill="#FFF" d="M32,15h2v18h-2V15z"/><path fill="#4CAF50" d="M27.5,10.5l-15-3v33l15-3V10.5z"/><path fill="#FFF" d="M19.141,29.35l2.253-3.666l-2.029-3.957h2.646l1.085,2.449c0.165,0.373,0.279,0.73,0.34,1.071h0.046c0.076-0.34,0.198-0.697,0.366-1.071l1.157-2.449h2.464l-2.19,3.951l2.368,3.673h-2.617l-1.341-2.529c-0.18-0.354-0.334-0.704-0.463-1.05h-0.033c-0.129,0.34-0.276,0.684-0.44,1.034l-1.378,2.545H19.141z"/></svg>'''
+        st.markdown(f"<div style='margin-top: -10px; margin-bottom: 20px; color: #444; font-size: 0.95rem; display: flex; align-items: center;'>{excel_icon_svg} <b>{uploaded_file.name}</b>&nbsp;({uploaded_file.size / 1024:.1f} KB)</div>", unsafe_allow_html=True)
         
         current_file_id = f"{uploaded_file.name}_{uploaded_file.size}"
         if st.session_state.get("last_uploaded_file") != current_file_id:
