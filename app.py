@@ -739,9 +739,9 @@ def show_teacher_timetable_dialog(df):
     st.dataframe(df, use_container_width=True, hide_index=True, height=teacher_height)
 
 def main():
-    st.set_page_config(page_title="時間割自動作成アプリ", layout="wide")
+    st.set_page_config(page_title="📅自動時間割", layout="wide")
     
-    st.title("時間割作成（テスト版）")
+    st.title("📅自動時間割")
     st.markdown("""
         <div style="display: flex; align-items: center; margin-bottom: 1rem;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="32" height="32" style="margin-right: 12px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));"><path fill="#4CAF50" d="M41,10H25v28h16c0.553,0,1-0.447,1-1V11C42,10.447,41.553,10,41,10z"/><path fill="#388E3C" d="M32 15H39V18H32zM32 25H39V28H32zM32 30H39V33H32zM32 20H39V23H32zM25 10H27V38H25z"/><path fill="#2E7D32" d="M27,42L6,38.203V9.797L27,6V42z"/><path fill="#FFF" d="M19.129,31l-2.411-4.561c-0.092-0.171-0.186-0.483-0.284-0.938h-0.037c-0.046,0.215-0.154,0.541-0.324,0.979L13.65,31H9.643l5.074-7.539L10.009,17h4.085l2.003,4.218c0.12,0.264,0.243,0.597,0.371,1.002h0.037c0.053-0.181,0.165-0.518,0.336-1.012L18.841,17h3.805l-4.521,6.866L23.111,31H19.129z"/></svg>
