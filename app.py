@@ -736,19 +736,25 @@ def main():
             background-color: transparent !important;
             min-height: auto !important;
         }
+        /* ボタン内の不要なアイコン等を消去 */
+        [data-testid="stFileUploader"] button > * {
+            display: none !important;
+        }
         /* ボタンのデザインをデータ確認ボタンに合わせる */
         [data-testid="stFileUploader"] button {
             font-size: 0 !important; /* 元の文字を幅ごと完全に消す */
+            color: transparent !important;
             background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%) !important;
             border: 1px solid #ccc !important;
             border-radius: 8px !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
             transition: all 0.2s ease !important;
-            width: auto !important;
+            width: 100% !important; /* 幅いっぱいに広げる */
             padding: 0.5rem 1.5rem !important;
-            display: inline-flex !important;
+            display: flex !important;
             align-items: center !important;
             justify-content: center !important;
+            text-align: center !important;
         }
         [data-testid="stFileUploader"] button:hover {
             background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%) !important;
