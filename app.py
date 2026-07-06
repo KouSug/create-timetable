@@ -797,27 +797,27 @@ def main():
         }
         
         /* データ確認ボタン・クリアボタンにも同様のグラデーションを適用 */
-        .main div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"] {
+        [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"] {
             background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%) !important;
             border: 1px solid #ccc !important;
             border-radius: 8px !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
             transition: all 0.2s ease !important;
         }
-        .main div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"] p {
+        [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"] p {
             color: #333 !important;
             font-weight: 600 !important;
         }
-        .main div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"]:hover {
+        [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"]:hover {
             background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%) !important;
             border-color: #aaa !important;
             box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
             transform: translateY(-1px) !important;
         }
-        .main div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"]:hover p {
+        [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"]:hover p {
             color: #333 !important;
         }
-        .main div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"]:active {
+        [data-testid="stMainBlockContainer"] div[data-testid="stButton"] button[data-testid="stBaseButton-secondary"]:active {
             transform: translateY(1px) !important;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
         }
