@@ -720,7 +720,20 @@ def main():
         
         with st.sidebar:
             st.markdown("### ⚙️ 詳細設定")
-            is_test_mode = st.toggle("🔧 テストモード", value=False, help="開発者用のデバッグ機能を有効にします")
+            test_mode_toggled = st.toggle("🔧 テストモード", key="test_mode_toggled", help="開発者用のデバッグ機能を有効にします")
+            is_test_mode = False
+            if test_mode_toggled:
+                if not st.session_state.get("test_mode_unlocked", False):
+                    pw = st.text_input("パスワードを入力", type="password")
+                    if pw == "7777":
+                        st.session_state.test_mode_unlocked = True
+                        st.rerun()
+                    elif pw != "":
+                        st.error("パスワードが違います")
+                else:
+                    is_test_mode = True
+            else:
+                st.session_state.test_mode_unlocked = False
             st.markdown("---")
             st.markdown("#### 設定ファイルの認識設定")
             st.caption("※通常は変更不要です")
