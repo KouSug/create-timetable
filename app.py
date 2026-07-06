@@ -1028,10 +1028,10 @@ def main():
                 
                 col1, col2 = st.columns(2)
                 with col1:
-                    if st.button("🏫 クラス別時間割を確認", use_container_width=True):
+                    if st.button("クラス別時間割", use_container_width=True):
                         show_class_timetable_dialog(df_class)
                 with col2:
-                    if st.button("👩‍🏫 教員別時間割を確認", use_container_width=True):
+                    if st.button("教員別時間割", use_container_width=True):
                         show_teacher_timetable_dialog(df_teacher)
                 
                 st.markdown("---")
