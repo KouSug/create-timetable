@@ -729,10 +729,12 @@ def main():
             width: max-content !important; /* 余白がクリック可能になるのを防ぐため、幅をボタンに合わせる */
         }
         
-        /* stFileUploader全体の余白を消去し、縦ズレを防止 */
+        /* stFileUploader全体の余白を消去し、縦ズレを防止。さらに相対位置で下に押し下げて横のボタンと完璧に揃える */
         [data-testid="stFileUploader"] {
             margin: 0 !important;
             padding: 0 !important;
+            position: relative !important;
+            top: 14px !important;
         }
         
         /* Dropzone内の全要素の文字サイズを0にして、不要なテキスト（上限表示等）を空間ごと完全に消滅させる */
