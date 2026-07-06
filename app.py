@@ -277,8 +277,11 @@ def export_to_excel_template(df_class, df_teacher, teacher_row_mapping, selected
     
     if target_workbook_bytes is not None:
         wb = load_workbook(BytesIO(target_workbook_bytes), keep_vba=keep_vba_target, keep_links=False)
-        # 最後のシートを複製
-        ws = wb.copy_worksheet(wb.worksheets[-1])
+        # 「原本」シートがあればそれを複製し、なければ最後のシートを複製する
+        if "原本" in wb.sheetnames:
+            ws = wb.copy_worksheet(wb["原本"])
+        else:
+            ws = wb.copy_worksheet(wb.worksheets[-1])
         # 複製したシートの授業データ部分のみをクリア（E列以降のすべての行）
         for row in range(4, ws.max_row + 1):
             for col in range(START_COL_INDEX, ws.max_column + 1):
