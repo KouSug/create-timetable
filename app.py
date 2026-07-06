@@ -717,7 +717,7 @@ def main():
     st.markdown("""
         <style>
         /* ファイルアップローダーをコンパクトなボタン型に変形するCSS */
-        [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] > div:first-child {
+        [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] > *:not(button) {
             display: none !important;
         }
         [data-testid="stFileUploaderDropzone"] {
@@ -728,14 +728,17 @@ def main():
         }
         /* ボタンのデザインをデータ確認ボタンに合わせる */
         [data-testid="stFileUploader"] button {
-            color: transparent !important;
-            position: relative !important;
+            font-size: 0 !important; /* 元の文字を幅ごと完全に消す */
             background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%) !important;
             border: 1px solid #ccc !important;
-            font-weight: 600 !important;
+            border-radius: 8px !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
             transition: all 0.2s ease !important;
-            width: 100% !important;
+            width: auto !important;
+            padding: 0.5rem 1.5rem !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         [data-testid="stFileUploader"] button:hover {
             background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%) !important;
@@ -750,13 +753,9 @@ def main():
         /* 疑似要素でテキストを上書き */
         [data-testid="stFileUploader"] button::after {
             content: "📁 ファイルをアップロード";
+            font-size: 1rem !important; /* 新しい文字のサイズ */
+            font-weight: 600 !important;
             color: #333 !important;
-            position: absolute !important;
-            left: 50% !important;
-            top: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            width: 100% !important;
-            pointer-events: none !important;
         }
         </style>
     """, unsafe_allow_html=True)
