@@ -1278,19 +1278,23 @@ def main():
                     edited_mapping_df = st.data_editor(st.session_state.teacher_mapping_df, use_container_width=True, hide_index=True)
                 
                 st.markdown("##### 出力設定")
-                export_mode = st.radio("出力方式", options=["新規作成（テンプレート使用）", "既存のファイルに追記する"], horizontal=True, label_visibility="collapsed")
+                export_mode = st.radio("出力方式", options=["新規作成（テンプレート使用）", "読み込んだファイルに追記する", "別のファイルに追記する"], horizontal=True, label_visibility="collapsed")
                 target_workbook_bytes = None
                 target_keep_vba = False
                 target_filename = ""
                 
-                if export_mode == "既存のファイルに追記する":
+                if export_mode == "読み込んだファイルに追記する":
+                    target_workbook_bytes = st.session_state.saved_file.getvalue()
+                    target_keep_vba = st.session_state.saved_file.name.endswith('.xlsm')
+                    target_filename = st.session_state.saved_file.name
+                elif export_mode == "別のファイルに追記する":
                     uploaded_target = st.file_uploader("追記先のExcelファイルを選択（先週までのファイル等）", type=['xlsx', 'xlsm'])
                     if uploaded_target:
                         target_workbook_bytes = uploaded_target.getvalue()
                         target_keep_vba = uploaded_target.name.endswith('.xlsm')
                         target_filename = uploaded_target.name
                 
-                disable_export = (export_mode == "既存のファイルに追記する" and not target_workbook_bytes)
+                disable_export = (export_mode == "別のファイルに追記する" and not target_workbook_bytes)
                 if disable_export:
                     st.info("👆 追記先のファイルをアップロードすると出力ボタンが押せるようになります。")
 
@@ -1375,7 +1379,7 @@ def main():
                         
                         mime_type = "application/vnd.ms-excel.sheet.macroEnabled.12" if ext == ".xlsm" else "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         
-                        if export_mode == "既存のファイルに追記する" and target_filename:
+                        if export_mode in ["読み込んだファイルに追記する", "別のファイルに追記する"] and target_filename:
                             out_filename = target_filename
                         else:
                             out_filename = f"時間割_完成版{ext}"
