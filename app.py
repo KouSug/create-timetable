@@ -798,7 +798,7 @@ def main():
                 st.dataframe(df, use_container_width=True)
                 
             st.markdown("---")
-            st.markdown("#### 2. カラムのマッピング設定")
+            st.markdown("#### 2. 項目の設定")
             st.markdown("Excelのどの列が何を表しているか選択してください。")
             
             columns = df.columns.tolist()
@@ -867,7 +867,7 @@ def main():
                     lecturer_col = None
             
             if "-- 指定なし --" in [teacher_col, class_col, hours_col, timeslot_start_col, timeslot_end_col]:
-                st.warning("👆 カラムのマッピング設定（教員名、クラス名、時数、始まる列、終わる列）をすべて選択してください。")
+                st.warning("👆 項目の設定（教員名、クラス名、時数、始まる列、終わる列）をすべて選択してください。")
                 return
                 
             timeslot_start_idx = columns.index(timeslot_start_col)
