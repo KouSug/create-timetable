@@ -987,13 +987,8 @@ def main():
                     if t_name and t_name.lower() != "nan":
                         if t_name not in teacher_order:
                             teacher_order.append(t_name)
-                        if df_order.shape[1] > 27:
-                            val = df_order.iloc[i, 27]
-                            if pd.notna(val) and str(val).strip() != "":
-                                try:
-                                    teacher_default_rows[t_name] = int(float(str(val).strip())) + 20
-                                except ValueError:
-                                    pass
+                        # 読み込んだシートの行番号（iは0始まりなのでi+1）に18を足して出力先行番号とする
+                        teacher_default_rows[t_name] = (i + 1) + 18
             st.session_state.teacher_default_rows = teacher_default_rows
             
             # 「週設定」シートの読み込み
