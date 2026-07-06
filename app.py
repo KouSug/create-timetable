@@ -277,11 +277,21 @@ def export_to_excel_template(df_class, df_teacher, teacher_row_mapping, selected
     
     if target_workbook_bytes is not None:
         wb = load_workbook(BytesIO(target_workbook_bytes), keep_vba=keep_vba_target, keep_links=False)
-        # 「原本」シートがあればそれを複製し、なければ最後のシートを複製する
         if "原本" in wb.sheetnames:
-            ws = wb.copy_worksheet(wb["原本"])
+            src_ws = wb["原本"]
+            ws = wb.copy_worksheet(src_ws)
         else:
-            ws = wb.copy_worksheet(wb.worksheets[-1])
+            src_ws = wb.worksheets[-1]
+            ws = wb.copy_worksheet(src_ws)
+            
+        # openpyxlの仕様上、copy_worksheetは条件付き書式をコピーしないため手動でコピー
+        import copy
+        try:
+            for cf in src_ws.conditional_formatting:
+                for rule in cf.rules:
+                    ws.conditional_formatting.add(cf.sqref, copy.deepcopy(rule))
+        except Exception:
+            pass
         # 複製したシートの授業データ部分のみをクリア（E列からAL列までの行）
         # AM列以降は消去しないように制限
         for row in range(4, ws.max_row + 1):
