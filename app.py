@@ -706,11 +706,10 @@ def main():
         </div>
     """, unsafe_allow_html=True)
 
-    col_upload, col_btn = st.columns([3, 1])
+    col_upload, col_btn = st.columns([3, 1], vertical_alignment="bottom")
     with col_upload:
         uploaded_file = st.file_uploader("Excelファイルをドラッグ＆ドロップ", type=["xlsx", "xls", "xlsm"])
     with col_btn:
-        st.markdown("<br><br>", unsafe_allow_html=True)
         raw_data_btn_container = st.empty()
 
     if uploaded_file is not None:
