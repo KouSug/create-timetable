@@ -1588,7 +1588,11 @@ def main():
                         mime_type = "application/vnd.ms-excel.sheet.macroEnabled.12" if ext == ".xlsm" else "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         
                         if export_mode in ["読み込んだファイルに追記する", "別のファイルに追記する"] and target_filename:
-                            out_filename = target_filename
+                            from datetime import datetime
+                            import re
+                            now_str = datetime.now().strftime("【%y%m%d%H%M】")
+                            clean_filename = re.sub(r'^【\d{10}】', '', target_filename)
+                            out_filename = f"{now_str}{clean_filename}"
                         else:
                             out_filename = f"時間割_完成版{ext}"
                             if week_str_parsed:
