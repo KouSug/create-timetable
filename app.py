@@ -801,7 +801,7 @@ def main():
                 
             st.markdown("---")
             st.markdown("#### 1. 項目の設定")
-            st.markdown("Excelのどの列が何を表しているか選択してください。")
+
             
             columns = df.columns.tolist()
             if len(columns) < 4:
