@@ -694,6 +694,15 @@ def start_cell_dialog():
 def show_raw_data_dialog(df):
     st.dataframe(df, use_container_width=True)
 
+@st.dialog("クラス別 時間割", width="large")
+def show_class_timetable_dialog(df):
+    st.dataframe(df, use_container_width=True)
+
+@st.dialog("教員別 時間割", width="large")
+def show_teacher_timetable_dialog(df):
+    teacher_height = len(df) * 35 + 38
+    st.dataframe(df, use_container_width=True, hide_index=True, height=teacher_height)
+
 def main():
     st.set_page_config(page_title="時間割自動作成アプリ", layout="wide")
     
@@ -1017,14 +1026,13 @@ def main():
                 else:
                     st.success("🎉 すべての制約を満たす完璧な時間割が見つかりました！")
                 
-                st.subheader("クラス別 時間割")
-                st.dataframe(df_class, use_container_width=True)
-                
-                st.markdown("---")
-                
-                st.subheader("教員別 時間割")
-                teacher_height = len(df_teacher) * 35 + 38
-                st.dataframe(df_teacher, use_container_width=True, hide_index=True, height=teacher_height)
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("🏫 クラス別時間割を確認", use_container_width=True):
+                        show_class_timetable_dialog(df_class)
+                with col2:
+                    if st.button("👩‍🏫 教員別時間割を確認", use_container_width=True):
+                        show_teacher_timetable_dialog(df_teacher)
                 
                 st.markdown("---")
                 st.markdown("""
