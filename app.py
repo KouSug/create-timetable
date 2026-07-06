@@ -735,6 +735,7 @@ def main():
             border: none !important;
             background-color: transparent !important;
             min-height: auto !important;
+            width: max-content !important; /* 余白がクリック可能になるのを防ぐため、幅をボタンに合わせる */
         }
         /* アップロード完了後のファイルアイコン（黒い四角）を消去 */
         [data-testid="stFileUploader"] svg {
