@@ -774,7 +774,7 @@ def main():
         /* 疑似要素でテキストを上書き（ドロップゾーンのみ対象） */
         [data-testid="stFileUploaderDropzone"] button::after {
             content: "📁 ファイルをアップロード";
-            font-size: 1rem !important; /* 新しい文字のサイズ */
+            font-size: 16px !important; /* データ確認ボタンとフォントサイズを合わせる */
             font-weight: normal !important; /* データ確認ボタンとフォントを合わせる */
             color: #31333F !important;
         }
