@@ -820,7 +820,7 @@ def main():
                 
             st.success("ファイルの読み込みに成功しました！")
             with raw_data_btn_container:
-                if st.button("📊 データを確認", use_container_width=True):
+                if st.button("📋データ確認", use_container_width=True):
                     show_raw_data_dialog(df)
                 
             st.markdown("---")
