@@ -817,7 +817,7 @@ def main():
             st.rerun()
 
     with col_btn:
-        raw_data_btn_container = st.container()
+        raw_data_btn_placeholder = st.empty()
 
     uploaded_file = st.session_state.saved_file
 
@@ -932,35 +932,7 @@ def main():
                 df = df.iloc[:, (start_col - 1):]
                 
             st.success("ファイルの読み込みに成功しました！")
-            with raw_data_btn_container:
-                st.markdown("""
-                <span class="raw-data-marker"></span>
-                <style>
-                /* CSSを仕込んでいるこのMarkdownブロック自体を非表示にして余白を消去 */
-                div.element-container:has(.raw-data-marker) {
-                    display: none !important;
-                }
-                div.element-container:has(.raw-data-marker) + div.element-container div[data-testid="stButton"] button {
-                    background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%);
-                    border: 1px solid #ccc;
-                    color: #333;
-                    font-weight: 600;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                    transition: all 0.2s ease;
-                }
-                div.element-container:has(.raw-data-marker) + div.element-container div[data-testid="stButton"] button:hover {
-                    background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 100%);
-                    border-color: #aaa;
-                    transform: translateY(-1px);
-                    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-                }
-                div.element-container:has(.raw-data-marker) + div.element-container div[data-testid="stButton"] button:active {
-                    transform: translateY(1px);
-                    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-                }
-                </style>
-                """, unsafe_allow_html=True)
-                if st.button("📋データ確認", use_container_width=True):
+            if raw_data_btn_placeholder.button("📋データ確認", use_container_width=True):
                     show_raw_data_dialog(df)
                 
             st.markdown("---")
