@@ -1225,14 +1225,17 @@ def main():
                                 unique_subjects.add(v)
                 unique_subjects = sorted(list(unique_subjects))
                 
+            with st.sidebar:
+                st.markdown("---")
+                st.markdown("#### 高度な制約設定")
+                prohibited_subjects = st.multiselect(
+                    "同時並行を禁止する教科（特別教室の被り防止など）", 
+                    unique_subjects, 
+                    help="選択した教科は、全クラスを通じて同じ時間帯（コマ）に1つしか配置されなくなります。（※少人数ペアに指定された合同授業は1つとカウントされます）"
+                )
+            
             with c4:
                 hours_col = st.selectbox("時数（週）", options_with_none, index=get_idx("時数(週)"))
-                
-            prohibited_subjects = st.multiselect(
-                "同時並行を禁止する教科（特別教室の被り防止など）", 
-                unique_subjects, 
-                help="選択した教科は、全クラスを通じて同じ時間帯（コマ）に1つしか配置されなくなります。（※少人数ペアに指定された合同授業は1つとカウントされます）"
-            )
                 
             c5, c6, c7, c8 = st.columns(4)
             with c5:
