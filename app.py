@@ -592,6 +592,62 @@ def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, sub
                 if vars_in_p:
                     model.Add(sum(vars_in_p) <= 1)
 
+    # 【ソフト制約】同じ教員が連続して授業を行う場合、なるべく同じ学年が続くようにボーナスを与える
+    import re
+    def get_grade_from_str(cls_name):
+        if not isinstance(cls_name, str): return None
+        m = re.search(r'([1-6１-６])', cls_name)
+        if m: return m.group(1)
+        return None
+
+    teacher_rows = {}
+    idx_to_grade = {}
+    for idx, row in df.iterrows():
+        t = row[teacher_col]
+        if pd.isna(t): continue
+        if t not in teacher_rows:
+            teacher_rows[t] = []
+        
+        in_group = False
+        for g_idx_list in tt_groups.values():
+            if idx in g_idx_list:
+                if idx == g_idx_list[0]:
+                    teacher_rows[t].append(idx)
+                in_group = True
+                break
+        if not in_group:
+            teacher_rows[t].append(idx)
+            
+        c = row[class_col]
+        idx_to_grade[idx] = get_grade_from_str(str(c))
+
+    for t, idx_list in teacher_rows.items():
+        grade_groups = {}
+        for idx in idx_list:
+            g = idx_to_grade.get(idx)
+            if g is not None:
+                if g not in grade_groups:
+                    grade_groups[g] = []
+                grade_groups[g].append(idx)
+                
+        for g, rows in grade_groups.items():
+            if len(rows) < 2:
+                continue
+                
+            for day, p_list in day_to_p.items():
+                for i in range(len(p_list) - 1):
+                    p1 = p_list[i]
+                    p2 = p_list[i+1]
+                    
+                    for idx1 in rows:
+                        for idx2 in rows:
+                            if idx1 == idx2: continue
+                            if (idx1, p1) in assign and (idx2, p2) in assign:
+                                b_var = model.NewBoolVar(f'bonus_{t}_{g}_{day}_{p1}_{p2}_{idx1}_{idx2}')
+                                model.AddImplication(b_var, assign[(idx1, p1)])
+                                model.AddImplication(b_var, assign[(idx2, p2)])
+                                all_weighted_assign_vars.append(b_var * 500)
+
     # 全体として「優先度の高い授業からできるだけ多く配置する」ようAIに指示（最適化）
     model.Maximize(sum(all_weighted_assign_vars))
 
