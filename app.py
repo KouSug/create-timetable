@@ -287,7 +287,8 @@ def export_to_excel_template(df_class, df_teacher, teacher_row_mapping, selected
             for col in range(START_COL_INDEX, ws.max_column + 1):
                 cell = ws.cell(row=row, column=col)
                 if type(cell).__name__ != 'MergedCell':
-                    cell.value = None
+                    if cell.data_type != 'f':
+                        cell.value = None
     else:
         if not os.path.exists(TEMPLATE_FILE_PATH):
             raise FileNotFoundError(f"テンプレートファイルが見つかりません。同じフォルダに 'template.xlsx' または 'template.xlsm' を置いてください。")
