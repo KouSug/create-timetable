@@ -735,15 +735,22 @@ def main():
             padding: 0 !important;
         }
         
-        /* Dropzone内外の不要なテキスト（200MB制限など）やアイコンを安全に消去 */
-        [data-testid="stFileUploaderDropzone"] svg,
-        [data-testid="stFileUploaderDropzone"] [data-testid="stMarkdownContainer"],
-        [data-testid="stFileUploader"] small,
-        [data-testid="stFileUploaderInstructions"] {
+        /* Dropzoneより下にある要素（200MB制限テキストなど）を完全に非表示にする */
+        [data-testid="stFileUploaderDropzone"] ~ * {
             display: none !important;
         }
+
+        /* Dropzone内の全要素のテキストサイズ・余白を0にして空間ごと完全に消滅させる */
+        [data-testid="stFileUploaderDropzone"] * {
+            font-size: 0 !important;
+            color: transparent !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 0 !important;
+            line-height: 0 !important;
+        }
         
-        /* アップロードボタン内の不要なアイコン等を消去 */
+        /* アップロードボタン内の不要なアイコン等を念のため消去 */
         [data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] > * {
             display: none !important;
         }
