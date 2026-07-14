@@ -634,19 +634,30 @@ def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, sub
             if len(rows) < 2:
                 continue
                 
+            # 各コマについて、「その教員がそのコマに学年gの授業を行うか」の変数を作成
+            grade_at_p = {}
+            for day, p_list in day_to_p.items():
+                for p in p_list:
+                    vars_in_p = []
+                    for idx in rows:
+                        if (idx, p) in assign:
+                            vars_in_p.append(assign[(idx, p)])
+                    if vars_in_p:
+                        bool_p = model.NewBoolVar(f'grade_{g}_at_{t}_{day}_{p}')
+                        model.Add(bool_p == sum(vars_in_p))
+                        grade_at_p[p] = bool_p
+                        
+            # 連続するコマの両方で学年gの授業が行われる場合にボーナス
             for day, p_list in day_to_p.items():
                 for i in range(len(p_list) - 1):
                     p1 = p_list[i]
                     p2 = p_list[i+1]
                     
-                    for idx1 in rows:
-                        for idx2 in rows:
-                            if idx1 == idx2: continue
-                            if (idx1, p1) in assign and (idx2, p2) in assign:
-                                b_var = model.NewBoolVar(f'bonus_{t}_{g}_{day}_{p1}_{p2}_{idx1}_{idx2}')
-                                model.AddImplication(b_var, assign[(idx1, p1)])
-                                model.AddImplication(b_var, assign[(idx2, p2)])
-                                all_weighted_assign_vars.append(b_var * 500)
+                    if p1 in grade_at_p and p2 in grade_at_p:
+                        b_var = model.NewBoolVar(f'bonus_{t}_{g}_{day}_{p1}_{p2}')
+                        model.AddImplication(b_var, grade_at_p[p1])
+                        model.AddImplication(b_var, grade_at_p[p2])
+                        all_weighted_assign_vars.append(b_var * 500)
 
     # 全体として「優先度の高い授業からできるだけ多く配置する」ようAIに指示（最適化）
     model.Maximize(sum(all_weighted_assign_vars))
