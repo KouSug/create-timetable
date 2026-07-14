@@ -6,6 +6,8 @@ import unicodedata
 import re
 import os
 
+st.set_page_config(page_title="📅自動時間割", layout="wide")
+
 # テンプレートファイルのパス（xlsmを優先、なければxlsx）
 if os.path.exists("template.xlsm"):
     TEMPLATE_FILE_PATH = "template.xlsm"
@@ -836,8 +838,6 @@ def show_teacher_timetable_dialog(df):
     st.dataframe(df, use_container_width=True, hide_index=True, height=teacher_height)
 
 def main():
-    st.set_page_config(page_title="📅自動時間割", layout="wide")
-    
     st.title("📅自動時間割")
     st.markdown("""
         <div style="display: flex; align-items: center; margin-bottom: 1rem;">
