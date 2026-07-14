@@ -669,7 +669,7 @@ def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, sub
     
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = 30.0
-    solver.parameters.num_search_workers = 1  # クラウド環境でのメモリ不足（OOM）を防ぐため、並列ワーカー数を制限
+    solver.parameters.num_search_workers = 4  # クラウド環境でのメモリ不足（OOM）を防ぎつつ、並列探索による精度低下を防ぐため「4」に設定
     import random
     solver.parameters.random_seed = random.randint(1, 100000)
     status = solver.Solve(model)
@@ -1638,4 +1638,9 @@ def main():
             st.error(f"エラーが発生しました: {e}")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        import traceback
+        st.error("重大なエラーが発生しました:")
+        st.code(traceback.format_exc())
