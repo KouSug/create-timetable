@@ -667,6 +667,7 @@ def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, sub
     
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = 30.0
+    solver.parameters.num_search_workers = 1  # クラウド環境でのメモリ不足（OOM）を防ぐため、並列ワーカー数を制限
     import random
     solver.parameters.random_seed = random.randint(1, 100000)
     status = solver.Solve(model)
