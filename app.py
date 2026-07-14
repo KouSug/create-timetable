@@ -668,8 +668,8 @@ def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, sub
     if status_text: status_text.text("条件を満たす最適な組み合わせを探索しています...")
     
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 30.0
-    solver.parameters.num_search_workers = 4  # クラウド環境でのメモリ不足（OOM）を防ぎつつ、並列探索による精度低下を防ぐため「4」に設定
+    solver.parameters.max_time_in_seconds = 45.0
+    solver.parameters.num_search_workers = 2  # メモリ不足(OOM)を防ぎつつ精度を確保する妥協点として2に設定
     import random
     solver.parameters.random_seed = random.randint(1, 100000)
     status = solver.Solve(model)
