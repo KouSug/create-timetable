@@ -1,0 +1,12 @@
+# --- ngrok 設定ファイル (ngrok_settings.txt) ---
+#
+# 【設定手順】
+# 1. ngrok公式サイト ( https://ngrok.com/ ) で無料アカウントを作成します。
+# 2. ログイン後、ダッシュボードの「Your Authtoken」からトークンをコピーし、以下の NGROK_AUTHTOKEN に貼り付けます。
+# 3. ダッシュボードの「Cloud Edge」->「Domains」メニューを開き、「Create Domain」をクリックして
+#    無料の固定ドメイン（例: xxx-xxx-xxx.ngrok-free.app）を取得し、以下の NGROK_DOMAIN に貼り付けます。
+# 
+# ※ イコールの前後にスペースを入れずに記述してください。
+
+NGROK_AUTHTOKEN=YOUR_TOKEN_HERE
+NGROK_DOMAIN=YOUR_DOMAIN_HERE.ngrok-free.app
