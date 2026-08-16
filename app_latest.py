@@ -6,6 +6,8 @@ import unicodedata
 import re
 import os
 
+st.set_page_config(page_title="📅自動時間割", layout="wide")
+
 # テンプレートファイルのパス（xlsmを優先、なければxlsx）
 if os.path.exists("template.xlsm"):
     TEMPLATE_FILE_PATH = "template.xlsm"
@@ -634,19 +636,30 @@ def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, sub
             if len(rows) < 2:
                 continue
                 
+            # 各コマについて、「その教員がそのコマに学年gの授業を行うか」の変数を作成
+            grade_at_p = {}
+            for day, p_list in day_to_p.items():
+                for p in p_list:
+                    vars_in_p = []
+                    for idx in rows:
+                        if (idx, p) in assign:
+                            vars_in_p.append(assign[(idx, p)])
+                    if vars_in_p:
+                        bool_p = model.NewBoolVar(f'grade_{g}_at_{t}_{day}_{p}')
+                        model.Add(bool_p == sum(vars_in_p))
+                        grade_at_p[p] = bool_p
+                        
+            # 連続するコマの両方で学年gの授業が行われる場合にボーナス
             for day, p_list in day_to_p.items():
                 for i in range(len(p_list) - 1):
                     p1 = p_list[i]
                     p2 = p_list[i+1]
                     
-                    for idx1 in rows:
-                        for idx2 in rows:
-                            if idx1 == idx2: continue
-                            if (idx1, p1) in assign and (idx2, p2) in assign:
-                                b_var = model.NewBoolVar(f'bonus_{t}_{g}_{day}_{p1}_{p2}_{idx1}_{idx2}')
-                                model.AddImplication(b_var, assign[(idx1, p1)])
-                                model.AddImplication(b_var, assign[(idx2, p2)])
-                                all_weighted_assign_vars.append(b_var * 500)
+                    if p1 in grade_at_p and p2 in grade_at_p:
+                        b_var = model.NewBoolVar(f'bonus_{t}_{g}_{day}_{p1}_{p2}')
+                        model.AddImplication(b_var, grade_at_p[p1])
+                        model.AddImplication(b_var, grade_at_p[p2])
+                        all_weighted_assign_vars.append(b_var * 500)
 
     # 全体として「優先度の高い授業からできるだけ多く配置する」ようAIに指示（最適化）
     model.Maximize(sum(all_weighted_assign_vars))
@@ -655,7 +668,8 @@ def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, sub
     if status_text: status_text.text("条件を満たす最適な組み合わせを探索しています...")
     
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 30.0
+    solver.parameters.max_time_in_seconds = 45.0
+    # solver.parameters.num_search_workers = 2  # 自宅PCなので制限を解除（全コア使用）
     import random
     solver.parameters.random_seed = random.randint(1, 100000)
     status = solver.Solve(model)
@@ -824,8 +838,6 @@ def show_teacher_timetable_dialog(df):
     st.dataframe(df, use_container_width=True, hide_index=True, height=teacher_height)
 
 def main():
-    st.set_page_config(page_title="📅自動時間割", layout="wide")
-    
     st.title("📅自動時間割")
     st.markdown("""
         <div style="display: flex; align-items: center; margin-bottom: 1rem;">
@@ -1291,7 +1303,7 @@ def main():
                 st.markdown("---")
                 st.markdown("#### 高度な制約設定")
                 prohibited_subjects = st.multiselect(
-                    "同時並行を禁止する教科（特別教室の被り防止など）", 
+                    "同時並行を禁止する教科", 
                     unique_subjects, 
                     help="選択した教科は、全クラスを通じて同じ時間帯（コマ）に1つしか配置されなくなります。（※少人数ペアに指定された合同授業は1つとカウントされます）"
                 )
@@ -1588,7 +1600,11 @@ def main():
                         mime_type = "application/vnd.ms-excel.sheet.macroEnabled.12" if ext == ".xlsm" else "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         
                         if export_mode in ["読み込んだファイルに追記する", "別のファイルに追記する"] and target_filename:
-                            out_filename = target_filename
+                            from datetime import datetime
+                            import re
+                            now_str = datetime.now().strftime("【%y%m%d%H%M】")
+                            clean_filename = re.sub(r'^【\d{10}】', '', target_filename)
+                            out_filename = f"{now_str}{clean_filename}"
                         else:
                             out_filename = f"時間割_完成版{ext}"
                             if week_str_parsed:
@@ -1622,4 +1638,9 @@ def main():
             st.error(f"エラーが発生しました: {e}")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        import traceback
+        st.error("重大なエラーが発生しました:")
+        st.code(traceback.format_exc())
