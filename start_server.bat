@@ -1,6 +1,7 @@
 @echo off
+cd /d %~dp0
 echo ======================================================
-echo   TimeTable App & ngrok Startup Script
+echo   TimeTable App ^& ngrok Startup Script
 echo ======================================================
 echo.
 
