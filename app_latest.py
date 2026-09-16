@@ -567,8 +567,8 @@ def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, sub
 
     # 特定教科の同時並行禁止ルールの追加
     if prohibited_subjects:
+        prohibited_rows = set()
         for subj in prohibited_subjects:
-            subj_rows = set()
             for idx, row in df.iterrows():
                 has_subj = False
                 if subject_cols:
@@ -580,19 +580,19 @@ def generate_timetable(df, teacher_col, class_col, hours_col, timeslot_cols, sub
                     in_group = False
                     for g_idx_list in tt_groups.values():
                         if idx in g_idx_list:
-                            subj_rows.add(g_idx_list[0])
+                            prohibited_rows.add(g_idx_list[0])
                             in_group = True
                             break
                     if not in_group:
-                        subj_rows.add(idx)
-            
-            for p in range(num_timeslots):
-                vars_in_p = []
-                for idx in subj_rows:
-                    if (idx, p) in assign:
-                        vars_in_p.append(assign[(idx, p)])
-                if vars_in_p:
-                    model.Add(sum(vars_in_p) <= 1)
+                        prohibited_rows.add(idx)
+        
+        for p in range(num_timeslots):
+            vars_in_p = []
+            for idx in prohibited_rows:
+                if (idx, p) in assign:
+                    vars_in_p.append(assign[(idx, p)])
+            if vars_in_p:
+                model.Add(sum(vars_in_p) <= 1)
 
     # 【ソフト制約】同じ教員が連続して授業を行う場合、なるべく同じ学年が続くようにボーナスを与える
     import re
@@ -1305,7 +1305,7 @@ def main():
                 prohibited_subjects = st.multiselect(
                     "同時並行を禁止する教科", 
                     unique_subjects, 
-                    help="選択した教科は、全クラスを通じて同じ時間帯（コマ）に1つしか配置されなくなります。（※少人数ペアに指定された合同授業は1つとカウントされます）"
+                    help="選択した【すべての教科】が、全クラスを通じて同じ時間帯（コマ）に合計で1つしか配置されなくなります（例：「体育」「音楽」を選ぶと、同じ時間に体育か音楽のどちらか1クラスしか実施できません）。※少人数ペアに指定された合同授業は1つとカウントされます"
                 )
             
             with c4:
